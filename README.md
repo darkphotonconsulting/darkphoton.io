@@ -26,7 +26,7 @@ The DynamoDB data model is as defined as seen below.
 
 ### Seed
 
-The seed data should be defined as seen below.
+You need to create the `data/Data.js` file before utiizing the data utility. The seed data should be defined as seen below.
 
 ```json
 {
