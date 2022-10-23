@@ -12,7 +12,7 @@
 
 ### Model
 
-This site is backed by DynamoDB & leverages modern patterns for storing records and relations in a single table.
+The DynamoDB data model is as defined as seen below.
 
 ```js
 {
@@ -21,5 +21,43 @@ This site is backed by DynamoDB & leverages modern patterns for storing records 
     data: '{
         "foo": "bar"
     }'
+}
+```
+
+### Seed
+
+The seed data should be defined as seen below.
+
+```json
+{
+    "type": "object",
+    "owners": [
+        {
+            "type": "object",
+            "name": "string",
+            "contacts": {
+
+            },
+            "bio": {
+                "type": "object",
+                "birth": {
+                    "type": "object",
+                    "ancestry": [
+                        {
+                            "type": "object",
+                            "name": "",
+                            "relation": ""
+                        }
+                    ],
+                    "temporal": {
+                        "type": "object"
+                    },
+                    "spatial": {
+                        "type": "object"
+                    }
+                }
+            }
+        }
+    ],
 }
 ```
