@@ -1,8 +1,16 @@
 {
   "name": "darkphoton.io",
   "version": "0.1.0",
+  "description": "Company Website",
   "private": true,
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/darkphotonconsulting/darkphoton.io"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/darkphotonconsulting"
+  },
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
