@@ -46,7 +46,7 @@ export const seedTable = async ({
       throw new Error('people not defined')
     }
 
-    /* people */
+    /* people (top) */
     const { people } = data
     for (const person of people) {
       console.log(`insert person ${person.name} ...`)
