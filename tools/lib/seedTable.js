@@ -2,25 +2,25 @@ import AWS from 'aws-sdk'
 
 import { Data } from '../../data/Data.js'
 
-const handlePrerequisites = ({
-  data = Data
-}) => {
-  if (Object.keys(data).length === 0) {
-    return false
-  }
-  if (data.type !== 'seed') {
-    return false
-  }
+// const handlePrerequisites = ({
+//   data = Data
+// }) => {
+//   if (Object.keys(data).length === 0) {
+//     return false
+//   }
+//   if (data.type !== 'seed') {
+//     return false
+//   }
 
-  if (!data.people) {
-    return false
-  }
+//   if (!data.people) {
+//     return false
+//   }
 
-  if (!data.people.length) {
-    return false
-  }
-  return true
-}
+//   if (!data.people.length) {
+//     return false
+//   }
+//   return true
+// }
 // const handleProfile = ({}) => { return }
 // const handleContacts = ({data}) => {}
 // const handleCompanies = ({data}) => {}
