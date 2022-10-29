@@ -2,6 +2,34 @@ import AWS from 'aws-sdk'
 
 import { Data } from '../../data/Data.js'
 
+const handlePrerequisites = ({
+  data = Data
+}) => {
+  if (Object.keys(data).length === 0) {
+    return false
+  }
+  if (data.type !== 'seed') {
+    return false
+  }
+
+  if (!data.people) {
+    return false
+  }
+
+  if (!data.people.length) {
+    return false
+  }
+  return true
+}
+// const handleProfile = ({}) => { return }
+// const handleContacts = ({data}) => {}
+// const handleCompanies = ({data}) => {}
+// const handleEducation = ({data}) => {}
+// const handleEmployers = ({data}) => {}
+// const handleEmployment = ({data}) => {}
+// const handleResponsibilities = ({data}) => {}
+// const handleSkills = ({data}) => {}
+
 export const seedTable = async ({
   table = 'darkphoton',
   hash = '_pk',
@@ -14,15 +42,14 @@ export const seedTable = async ({
   })
   data = data || Data
   if (data.type && data.type === 'seed') {
-    if (!data.people) {
-      throw new Error('no people in data')
+    if (!data.people || !data.people.length || data.people.length === 0) {
+      throw new Error('people not defined')
     }
-    if (!data.companies) {
-      throw new Error('no companies in data')
-    }
+
+    /* people */
     const { people } = data
     for (const person of people) {
-      console.log(`inserting person profile ${person.name}...`)
+      console.log(`insert person ${person.name} ...`)
       const { name, profile } = person
       const profileItem = {
         TableName: table,
@@ -31,14 +58,21 @@ export const seedTable = async ({
           _sk: 'profile',
           data: JSON.stringify(
             name,
-            profile
+            {
+              ...profile,
+              employers: person.employers.length,
+              companies: person.companies.length,
+              contacts: person.contacts.length
+            }
           )
         }
       }
       await documentClient.put(profileItem).promise()
+
+      /* contacts */
       const { contacts } = person
       for (const contact of contacts) {
-        console.log(`inserting person contact ${contact.name}...`)
+        console.log(`insert [${person.name}] contact ${contact.name} ... `)
         const contactItem = {
           TableName: table,
           Item: {
@@ -52,9 +86,10 @@ export const seedTable = async ({
         await documentClient.put(contactItem).promise()
       }
 
+      /* companies */
       const { companies } = person
       for (const company of companies) {
-        console.log(`inserting person company ${company.name}`)
+        console.log(`insert [${person.name}] company ${company.name} ...`)
         const companyItem = {
           TableName: table,
           Item: {
@@ -67,9 +102,10 @@ export const seedTable = async ({
         }
         await documentClient.put(companyItem).promise()
       }
+      /* education */
       const { education } = person
       for (const school of education) {
-        console.log(`inserting person education ${school.name}...`)
+        console.log(`inserting [${person.name}] education ${school.name} ...`)
         const schoolItem = {
           TableName: table,
           Item: {
@@ -82,9 +118,10 @@ export const seedTable = async ({
         }
         await documentClient.put(schoolItem).promise()
       }
+      /* employers */
       const { employers } = person
       for (const employer of employers) {
-        console.log(`inserting employer ${employer.name}`)
+        console.log(`inserting [${person.name}] employer ${employer.name} ...`)
         const employerItem = {
           TableName: table,
           Item: {
@@ -96,29 +133,30 @@ export const seedTable = async ({
               state: employer.state,
               country: employer.country || 'USA',
               start: `${employer.start}`,
-              end: `${employer.end}`,
-              employmentsHeld: employer.employment.length
+              end: `${employer.end}`
+              // employmentsHeld: employer.employment.length
             })
           }
         }
         await documentClient.put(employerItem).promise()
-        // const { employment } = employer
+
+        /* employment */
         for (const employment of employer.employment) {
-          console.log(`inserting employment employment ${employment.employmentName} `)
+          console.log(`inserting [${person.name}] employment ${employment.name} `)
           const employmentItem = {
             TableName: table,
             Item: {
               _pk: `employer#${employer.name}`,
-              _sk: `employment#${employment.employmentName}`,
+              _sk: `employment#${employment.name}`,
               data: JSON.stringify({
-                name: employment.employmentName,
-                description: employment.employmentDescription,
-                group: employment.employmentGroup,
-                manager: employment.employmentManager,
-                start: `${employment.startMonth}-${employment.startDay}-${employment.startYear}`,
-                end: `${employment.endMonth}-${employment.endDay}-${employment.endYear}`,
-                responsibilities: employment.employmentResponsibilities,
-                milestones: employment.employmentMilestones
+                name: employment.name,
+                description: employment.description,
+                group: employment.group,
+                manager: employment.manager,
+                start: employer.start,
+                end: employer.end
+                // responsibilities: employment.responsibilities,
+                // highlights: employment.highlights
               })
             }
           }
