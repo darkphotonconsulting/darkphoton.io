@@ -10,7 +10,6 @@ import {
 } from './lib/dropTable.js'
 const program = new Command()
 
-
 program
   .version('0.0.1')
   .description('DarkPhoton Data Model CLI')

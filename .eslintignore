@@ -1,0 +1,11 @@
+.DS_Store
+node_modules
+coverage
+
+*.htm
+*.html
+*.json
+*.md
+*.markdown
+*.yml
+*.yaml

@@ -27,10 +27,10 @@ export const Table = ({
     ],
     ProvisionedThroughput: {
       ReadCapacityUnits: 1,
-      WriteCapacityUnits: 1,
+      WriteCapacityUnits: 1
     },
     StreamSpecification: {
-      StreamEnabled: false,
+      StreamEnabled: false
     }
   }
 }
