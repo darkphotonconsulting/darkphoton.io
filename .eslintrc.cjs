@@ -3,5 +3,7 @@ module.exports = {
   env: {
     jest: true
   },
-  extends: ['eslint:recommended', 'standard']
+  extends: [
+    'eslint:recommended', 'standard', 'plugin:react/recommended'
+  ]
 }
