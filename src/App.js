@@ -27,7 +27,6 @@ App.propTypes = {
 }
 export function App ({
   colors = 'dark',
-  // config = {},
   ...props
 }) {
   const theme = createTheme({
