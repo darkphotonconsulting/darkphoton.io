@@ -170,3 +170,6 @@ dist
 data/Data.js
 
 junk
+
+.env*
+.npmrc
