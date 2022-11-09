@@ -1,5 +1,5 @@
 
-import logo from './logo.svg'
+// import logo from './logo.svg'
 import './App.css'
 import React from 'react'
 import PropTypes from 'prop-types'
@@ -11,13 +11,18 @@ import {
 import {
   createTheme,
   ThemeProvider,
-  Box,
-  CssBaseline
+  // Box,
+  CssBaseline,
+  Grid
 } from '@mui/material'
 
 import {
   ControlBar
 } from './components/ControlBar.jsx'
+
+import {
+  Splash
+} from './components/Splash.jsx'
 
 App.propTypes = {
   colors: PropTypes.string,
@@ -29,18 +34,87 @@ export function App ({
   colors = 'dark',
   ...props
 }) {
-  const theme = createTheme({
-    ...Configuration.themes.find(theme => theme.name === 'default').theme
+  // eslint-disable-next-line no-unused-vars
+  const [state, setState] = React.useState({
+    theme: {
+      mode: 'dark'
+    },
+    bar: {
+      hovered: false,
+      buttons: {}
+    },
+    splash: {
+      hidden: false,
+      background: 'black',
+      limits: {
+        x: [0, 10],
+        y: [0, 10],
+        z: [0, 10],
+        major: [1, 3],
+        minor: [1, 3],
+        radius: [1, 3]
+      }
+    }
   })
-  // const config = config || Configuration
+
+  // update theme based on state
+  const theme = createTheme({
+    ...Configuration.themes.find(
+      theme => theme.name === state?.theme?.mode
+    ).theme
+  })
+
+  console.log({
+    event: 'theme.load',
+    theme
+  })
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <ControlBar
-        theme={theme}
-        config={Configuration}
-      />
-      <Box className="App">
+      <div
+        id={'application'}
+        style={{
+          height: '100vh',
+          width: '100vw',
+          display: 'flex',
+          backgroundColor: theme.palette.primary.main
+        }}
+      >
+        <Grid
+          container
+          alignItems={'center'}
+          justifyContent={'center'}
+
+        >
+          <Grid
+            item
+
+          >
+            <Splash
+              state={state}
+              setState={setState}
+              theme={theme}
+            />
+          </Grid>
+          <Grid
+            item
+          >
+            <ControlBar
+              state={state}
+              setState={setState}
+              theme={
+                // state.theme
+                theme
+              }
+              config={Configuration}
+              className="control-bar"
+            />
+          </Grid>
+        </Grid>
+      </div>
+
+      {/* <Box className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
           <p>
@@ -55,10 +129,8 @@ export function App ({
             More
           </a>
         </header>
-      </Box>
+      </Box> */}
     </ThemeProvider>
-
   )
 }
-
 export default App

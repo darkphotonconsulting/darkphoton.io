@@ -1,7 +1,7 @@
-// import AWS from 'aws-sdk'
+
 const AWS = require('aws-sdk')
 const EventEmitter = require('events')
-// import EventEmitter from 'events'
+
 class Node extends EventEmitter {
   #table = 'darkphoton'
 
@@ -11,10 +11,14 @@ class Node extends EventEmitter {
   }
 
   constructor ({
-    table
+    table,
+    pk,
+    sk
   }) {
     super()
     this.table = table || this.#table
+    this.pk = pk
+    this.sk = sk
     this.dynamoClient = new AWS.DynamoDB({
       endpoint: new AWS.Endpoint(process.env.DYNAMODB_ENDPOINT)
     })
@@ -43,83 +47,52 @@ class Node extends EventEmitter {
     throw new Error('Table does not exist')
   }
 
-  async items ({
-    pk = 'person#Aaron Samuel',
-    sk = 'profile'
-  }) {
-    if (await this.preflight()) {
-      const items = await this.scan()
-      return items
-        .filter(
-          item =>
-            new RegExp(pk).test(item._pk) && new RegExp(sk).test(item._sk)
-        )
-    } else {
-      throw new Error('Table does not exist')
-    }
-  }
-}
-
-class People extends Node {
-  #pkish = 'person'
-  #skish = 'profile'
-
-  constructor () {
-    super({
-      table: 'darkphoton'
-    })
-  }
-
-  async items ({
-    pk = this.#pkish,
-    sk = this.#skish
-  }) {
-    return await super.items({
-      pk,
-      sk
-    })
-  }
-}
-class Person extends Node {
-  #pk = 'person'
-  #sk = '.*'
-  constructor ({
-    table,
-    name = 'Aaron Samuel'
-  }) {
-    super({
-      table: 'darkphoton'
-    })
-  }
-
   async items () {
     if (await this.preflight()) {
       const items = await this.scan()
       return items
         .filter(
           item =>
-            new RegExp(this.#pk).test(item._pk) && new RegExp(this.#sk).test(item._sk)
+            new RegExp(this.pk).test(item._pk) && new RegExp(this.sk).test(item._sk)
         )
+    } else {
+      throw new Error('Table does not exist')
+    }
+  }
+
+  async query ({ pk, sk }) {
+    if (await this.preflight()) {
+      const params = {
+        TableName: this.table,
+        KeyConditionExpression: '#pk = :pk and begins_with(#sk, :sk)',
+        ExpressionAttributeNames: {
+          '#pk': '_pk',
+          '#sk': '_sk'
+        },
+        ExpressionAttributeValues: {
+          ':pk': pk,
+          ':sk': sk
+        }
+      }
+      const result = await this.documentClient.query(params).promise()
+      return result.Items
+    } else {
+      throw new Error('Table does not exist')
+    }
+  }
+
+  async getNodes ({ pk, sk }) {
+    if (await this.preflight()) {
+      const items = await this.query({ pk, sk })
+      return items.map(item => item._sk)
     } else {
       throw new Error('Table does not exist')
     }
   }
 }
 
-// class Companies extends Node {}
-// class Company extends Node {}
-
-// class Employers extends Node {}
-// class Employer extends Node {}
-
-// class Employments extends Node {}
-// class Employment extends Node {}
-
-// class Contacts extends Node {}
-// class Contact extends Node {}
-
 module.exports = {
-  Node,
-  People,
-  Person
+  Node
+  // People,
+  // Person
 }
