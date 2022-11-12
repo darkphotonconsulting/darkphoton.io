@@ -72,14 +72,16 @@ export function ControlBar ({
   ]
   // eslint-disable-next-line no-unused-vars
   const [userTheme, setUserTheme] = React.useState('dark')
+  // eslint-disable-next-line no-unused-vars
   const [width, setWidth] = React.useState(0)
+  // eslint-disable-next-line no-unused-vars
   const [height, setHeight] = React.useState(0)
 
   React.useLayoutEffect(() => {
     setWidth(containerRef.current.offsetWidth)
-    console.log('width', width)
+    // console.log('width', width)
     setHeight(containerRef.current.offsetHeight)
-    console.log('height', height)
+    // console.log('height', height)
   })
 
   const dimensions = {
