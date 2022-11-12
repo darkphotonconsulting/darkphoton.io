@@ -47,12 +47,12 @@ export function App ({
       hidden: false,
       background: 'black',
       limits: {
-        x: [0, 10],
-        y: [0, 10],
-        z: [0, 10],
-        major: [1, 3],
-        minor: [1, 3],
-        radius: [1, 3]
+        x: [-400, 400],
+        y: [-400, 400],
+        z: [-400, 400],
+        major: [1, 5],
+        minor: [1, 5],
+        radius: [1, 5]
       }
     }
   })
