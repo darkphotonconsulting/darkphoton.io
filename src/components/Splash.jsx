@@ -184,7 +184,8 @@ function Star ({
   const meshRef = React.useRef(null)
   const geometryRef = React.useRef(null)
   const materialRef = React.useRef(null)
-  const ColorShiftMaterial = shaderMaterial(
+  const parallaxMaterialRef = React.useRef(null)
+  const StarPerlinNoiseMaterial = shaderMaterial(
     {
       time: 0,
       color: new THREE.Color(0xffffff)
@@ -342,41 +343,57 @@ function Star ({
       }
     `
   )
-  extend({ ColorShiftMaterial })
-  // eslint-disable-next-line no-unused-vars
-  const parallaxRenderer = new THREE.WebGLRenderer({ antialias: true })
-  const parallaxScene = new THREE.Scene()
-  const parallaxRenderTarget = new THREE.WebGLRenderTarget(
-    256, {
-      format: THREE.RGBAFormat,
-      generateMipmaps: true,
-      minFilter: THREE.LinearMipmapLinearFilter,
-      encoding: THREE.sRGBEncoding
-    }
+  const StarParallaxMaterial = shaderMaterial(
+    {
+      perlin: null,
+      time: 0,
+      resolution: new THREE.Vector4()
+    },
+    glsl`
+      #pragma vscode_glsllint_stage : frag
+      varying vec2 vUv;
+      varying vec3 vPosition;
+      varying vec3 vNormal;
+      varying vec3 eyeVector;
+      float PI = 3.14159265358;
+
+      void main() {
+        // ignore compiler error
+        vUv = uv;
+        vPosition = position;
+        vec4 worldPosition = modelMatrix * vec4(position, 1.0);
+        eyeVector = normalize(worldPosition.xyz - cameraPosition);
+        vNormal = normalize(normalMatrix*normal);
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    glsl`
+      uniform float time;
+      uniform float resolution;
+      uniform samplerCube perlin;
+      varying vec2 vUv;
+      varying vec3 vPosition;
+      void main() {
+        // gl_FragColor = vec4(1., 1., 1., 1.0);
+        gl_FragColor = textureCube(perlin, vPosition);
+      }
+    `
   )
+  extend({ StarPerlinNoiseMaterial, StarParallaxMaterial })
   // eslint-disable-next-line no-unused-vars
-  const parallaxCamera = new THREE.CubeCamera(
-    0.1, 1000, parallaxRenderTarget
-  )
-  // eslint-disable-next-line no-unused-vars
-  const parallaxMaterial = new ColorShiftMaterial({
-    color: '0x000000',
-    time: 0,
-    side: THREE.DoubleSide
-  })
-  // eslint-disable-next-line no-unused-vars
-  const parallaxMesh = new THREE.Mesh(
-    new THREE.SphereGeometry(radius, sections, sections),
-    parallaxMaterial
-  )
-  parallaxScene.add(parallaxMesh)
+  const { gl, size } = useThree()
   useFrame(() => {
     materialRef.current.uniforms.time.value += 0.05
+    // console.log(parallaxMaterialRef.current)
+    // parallax layer
+    // parallaxMaterial.uniforms.perlin = parallaxRenderTarget.texture
+    // gl.render(parallaxScene, parallaxCamera)
   })
   return (
     <group
       ref={groupRef}
       position={position}
+      visible={true}
     >
       <mesh
         ref={meshRef}
@@ -392,7 +409,7 @@ function Star ({
             ]
           }
         />
-        <colorShiftMaterial
+        <starPerlinNoiseMaterial
           ref={materialRef}
           attach='material'
           color={new THREE.Color('#000000')}
@@ -400,6 +417,39 @@ function Star ({
           side={THREE.DoubleSide}
         />
       </mesh>
+        <CubeCamera
+          near={0.1}
+          far={1000}
+        >
+          {(texture) => (
+              <mesh>
+                <sphereBufferGeometry
+                  attach='geometry'
+                  args={
+                    [
+                      radius,
+                      sections,
+                      sections
+                    ]
+                  }
+                />
+                <starParallaxMaterial
+                  ref={parallaxMaterialRef}
+                  attach='material'
+                  color={new THREE.Color('#000000')}
+                  time={10}
+                  side={THREE.DoubleSide}
+                  perlin={
+                    texture
+                  }
+                />
+                {/* <meshStandardMaterial
+                  attach='material'
+                  color={new THREE.Color('#000000')}
+                /> */}
+              </mesh>
+          )}
+        </CubeCamera>
       {/* <mesh>
         <icosahedronBufferGeometry
           attach='geometry'
