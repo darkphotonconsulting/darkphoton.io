@@ -39,6 +39,9 @@ export function App ({
     theme: {
       mode: 'dark'
     },
+    audio: {
+      enabled: false
+    },
     bar: {
       hovered: false,
       buttons: {}

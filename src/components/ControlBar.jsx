@@ -8,7 +8,9 @@ import {
   faStarship,
   faSunBright,
   faMoon,
-  faHeadSideBrain
+  faHeadSideBrain,
+  faVolumeSlash,
+  faVolumeUp
 } from '@fortawesome/pro-duotone-svg-icons'
 import {
   faTwitter,
@@ -235,7 +237,61 @@ export function ControlBar ({
               </Box>
               <Box>
                   <Tooltip
-                    title={userTheme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+                    title={state.audio.enabled ? 'Disable Audio' : 'Enable Audio'}
+                  >
+                    <IconButton
+                      id={'controlbar-ibutton-audio'}
+                      onMouseOver={(event) => {
+                        if (event.target.id) {
+                          setState((state) => {
+                            return {
+                              ...state,
+                              bar: {
+                                ...state.bar,
+                                buttons: {
+                                  ...state.bar.buttons,
+                                  [event.target.id]: {
+                                    hovered: true
+                                  }
+                                }
+                              }
+                            }
+                          })
+                        }
+                      }}
+                      onMouseLeave={(event) => {
+                        if (event.target.id) {
+                          setState((state) => {
+                            return {
+                              ...state,
+                              bar: {
+                                ...state.bar,
+                                buttons: {
+                                  ...state.bar.buttons,
+                                  [event.target.id]: {
+                                    hovered: false
+                                  }
+                                }
+                              }
+                            }
+                          })
+                        }
+                      }}
+                      onClick={(event) => {
+                        setState((state) => ({
+                          ...state,
+                          audio: {
+                            ...state.audio,
+                            enabled: !state.audio.enabled
+                          }
+                        }))
+                      }}
+                    >
+                      <FontAwesomeIcon icon={state.audio.enabled ? faVolumeSlash : faVolumeUp}/>
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip
+                    title={state.theme.mode === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
                   >
                   <IconButton
                     id={'controlbar-ibutton-theme'}
