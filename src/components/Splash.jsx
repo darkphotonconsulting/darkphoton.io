@@ -29,7 +29,11 @@ import {
   CubeCamera
   // Center
 } from '@react-three/drei'
-import { EffectComposer, Bloom, ColorDepth } from '@react-three/postprocessing'
+import {
+  EffectComposer,
+  Bloom,
+  ColorDepth
+} from '@react-three/postprocessing'
 import { BlendFunction } from 'postprocessing'
 // eslint-disable-next-line no-unused-vars
 import glsl from 'babel-plugin-glsl/macro'
@@ -161,10 +165,15 @@ function Internals ({
   rfactor = 0.01,
   ...props
 }) {
-  const { scene, gl } = useThree()
+  const {
+    scene,
+    gl
+  } = useThree()
   useFrame((state) => {
     scene.rotation.y += 0.001
     gl.outputEncoding = THREE.sRGBEncoding
+    gl.setPixelRatio(window.devicePixelRatio)
+    gl.setSize(window.innerWidth, window.innerHeight)
   })
   return (
     <group>
@@ -356,7 +365,16 @@ function Star ({
       varying vec3 vNormal;
       varying vec3 eyeVector;
       float PI = 3.14159265358;
+      varying vec3 vLayer0;
+      varying vec3 vLayer1;
+      varying vec3 vLayer2;
+      uniform float time;
 
+      mat2 rotate(float a) {
+        float s = sin(a);
+        float c = cos(a);
+        return mat2(c, -s, s, c);
+      }
       void main() {
         // ignore compiler error
         vUv = uv;
@@ -364,6 +382,17 @@ function Star ({
         vec4 worldPosition = modelMatrix * vec4(position, 1.0);
         eyeVector = normalize(worldPosition.xyz - cameraPosition);
         vNormal = normalize(normalMatrix*normal);
+        float slowTime = time * 0.005;
+        mat2 rotation = rotate(slowTime);
+        vec3 p0 = position;
+        p0.yz = rotation * p0.yz;
+        vLayer0 = p0;
+        vec3 p1 = position;
+        p1.xz = rotation * p1.xz;
+        vLayer1 = p1;
+        vec3 p2 = position;
+        p2.xy = rotation * p2.xy;
+        vLayer2 = p2;
         gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
       }
     `,
@@ -373,21 +402,41 @@ function Star ({
       uniform samplerCube perlin;
       varying vec2 vUv;
       varying vec3 vPosition;
+      varying vec3 vLayer0;
+      varying vec3 vLayer1;
+      varying vec3 vLayer2;
+
+      vec3 brightnessToColor(float b) {
+        b *=0.55;
+        return vec3(b, b*b, b*b*b*b)*0.6;
+      }
+      float supersun() {
+        float sum = 0.;
+        sum += textureCube(perlin, vLayer0).r ;
+        sum += textureCube(perlin, vLayer1).r ;
+        sum += textureCube(perlin, vLayer2).r ;
+        sum *= 0.22;
+        return sum;
+      }
       void main() {
         // gl_FragColor = vec4(1., 1., 1., 1.0);
-        gl_FragColor = textureCube(perlin, vPosition);
+        // gl_FragColor = textureCube(perlin, vPosition);
+        // gl_FragColor = vec4(supersun());
+        float brightness = supersun();
+        brightness = brightness*4. + 1.;
+        vec3 col = brightnessToColor(brightness);
+        gl_FragColor = vec4(col, 1.0);
+        // gl_FragColor = vec4(vLayer2, 1.);
       }
     `
   )
   extend({ StarPerlinNoiseMaterial, StarParallaxMaterial })
   // eslint-disable-next-line no-unused-vars
   const { gl, size } = useThree()
-  useFrame(() => {
+  useFrame((state) => {
+    // const time = state.clock.getElapsedTime()
     materialRef.current.uniforms.time.value += 0.05
-    // console.log(parallaxMaterialRef.current)
-    // parallax layer
-    // parallaxMaterial.uniforms.perlin = parallaxRenderTarget.texture
-    // gl.render(parallaxScene, parallaxCamera)
+    parallaxMaterialRef.current.uniforms.time.value += 0.05
   })
   return (
     <group
@@ -412,14 +461,14 @@ function Star ({
         <starPerlinNoiseMaterial
           ref={materialRef}
           attach='material'
-          color={new THREE.Color('#000000')}
-          time={10}
+          color={new THREE.Color('#FFFFFF')}
+          time={0}
           side={THREE.DoubleSide}
         />
       </mesh>
         <CubeCamera
           near={0.1}
-          far={1000}
+          far={100}
         >
           {(texture) => (
               <mesh>
@@ -427,7 +476,7 @@ function Star ({
                   attach='geometry'
                   args={
                     [
-                      radius,
+                      radius + (radius * 0.1),
                       sections,
                       sections
                     ]
@@ -436,7 +485,7 @@ function Star ({
                 <starParallaxMaterial
                   ref={parallaxMaterialRef}
                   attach='material'
-                  color={new THREE.Color('#000000')}
+                  color={new THREE.Color('#FFFFFF')}
                   time={10}
                   side={THREE.DoubleSide}
                   perlin={
@@ -482,6 +531,7 @@ function DysonSphere ({
   const groupRef = React.useRef(null)
   // const cubeCamRef = React.useRef(null)
   const texture = new THREE.TextureLoader().load('/gsfc.jpg')
+  // const textures = ['/gsfc.jpg', '/milkyway.jpg', '/brazil.jpg'].map((path) => new THREE.TextureLoader().load(path))
   texture.wrapS = texture.wrapT = THREE.MirroredRepeatWrapping
   const dysonSphere = new THREE.IcosahedronGeometry(radius, 2)
   const outerSphere = new THREE.IcosahedronGeometry(radius, 2)
@@ -552,6 +602,7 @@ function DysonSphere ({
       time: 0,
       color: new THREE.Color('#000000'),
       tex: texture,
+      // texList: textures,
       resolution: new THREE.Vector4(),
       uvRate: new THREE.Vector2(2, 1)
     },
@@ -572,6 +623,7 @@ function DysonSphere ({
       }
     `,
     glsl`
+      // #define numberOfTextures 4
       varying vec2 vUv;
       varying vec3 vPosition;
       varying vec3 vNormal;
@@ -579,6 +631,7 @@ function DysonSphere ({
       float PI = 3.14159265358;
       uniform float time;
       uniform sampler2D tex;
+      // uniform sampler2D texList[numberOfTextures];
 
       float hash12(vec2 p) {
         p = fract(p * vec2(5.3983, 5.4427));
@@ -591,6 +644,17 @@ function DysonSphere ({
           p += dot(p.yx, p.xy +  vec2(21.5351, 14.3137));
         return fract(vec2(p.x * p.y * 95.4337, p.x * p.y * 97.597));
       }
+
+      // vec4 getSampleFromArray(sampler2D texes[4], int ndx, vec2 uv) {
+      //   vec4 color = vec4(0.);
+      //   for (int i = 0; i < numberOfTextures; i++) {
+      //     vec4 c = texture2D(texes[i], uv);
+      //     if (i == ndx) {
+      //       color += c;
+      //     }
+      //   }
+      //   return color;
+      // }
 
       void main() {
 
@@ -620,7 +684,7 @@ function DysonSphere ({
   )
   extend({ DysonSphereMaterial, OuterSphereMaterial })
   return (
-    <group ref={groupRef} visible={false}>
+    <group ref={groupRef} visible={true}>
       <CubeCamera>
         {(texture) => (
           <group>
@@ -637,6 +701,7 @@ function DysonSphere ({
               >
               {/* <icosahedronBufferGeometry args={[radius, 2]}/> */}
               <outerSphereMaterial
+                alpha={0.1}
                 wireframe={false}
                 color={new THREE.Color(1, 1, 1)}
               />
@@ -981,11 +1046,24 @@ export function Splash ({
           }}
         >
         <Internals/>
-        {/* <Navigation/> */}
-        {/* <Camera/> */}
-        <color attach='background' args={[`${theme.palette.primary.dark}`]}/>
+
+        <color
+          attach='background'
+          args={
+            // [`${theme.palette.primary.dark}`]
+            [new THREE.Color('#000000')]
+          }
+        />
+        <pointLight
+          position={
+            [0, 0, 0]
+          }
+          color={new THREE.Color('#ffffff')}
+          intensity={1}
+        />
         <ambientLight
-          intensity={10}
+          color={new THREE.Color('#ffffff')}
+          intensity={1.5}
         />
           <Stars
             saturation={10}
@@ -1029,13 +1107,14 @@ export function Splash ({
           <Bloom
             mipmapBlur
             luminanceThreshold={0.1}
-            radius={0.8}
+            radius={0.9}
             levels={10}
+            blendFunction={BlendFunction.ADD}
           />
           <ColorDepth
-            bits={16}
+            bits={32}
             opacity={0.9}
-            blendFunction={BlendFunction.MULTIPLY}
+            blendFunction={BlendFunction.ADD}
             // blendFunction={BlendFunction.COLOR_DODGE}
             // blendFunction={new THREE.}
           />
