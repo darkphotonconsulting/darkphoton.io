@@ -3,6 +3,9 @@ import './Splash.css'
 import React from 'react'
 import PropTypes from 'prop-types'
 import * as THREE from 'three'
+/*
+  THREE.js loads beta libs in the examples folder and it feels bad 😒
+*/
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
 import {
@@ -16,18 +19,19 @@ import {
 // import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import {
   Loader,
-  Trail,
+  // Trail,
   Float,
   Stars,
-  Sphere,
-  Line,
+  // Sphere,
+  // Line,
   Billboard,
   OrbitControls,
-  MeshDistortMaterial,
+  // MeshDistortMaterial,
   shaderMaterial,
   PerspectiveCamera,
-  CubeCamera
-  // Center
+  CubeCamera,
+  // Billboard,
+  Center
 } from '@react-three/drei'
 import {
   EffectComposer,
@@ -39,154 +43,21 @@ import { BlendFunction } from 'postprocessing'
 import glsl from 'babel-plugin-glsl/macro'
 extend({ TextGeometry })
 
-const lineResolution = 1000
-const lineWidth = 0.1
+// const lineResolution = 1000
+// const lineWidth = 0.1
 
-/* prop types */
-
-ParticleZoo.propTypes = {
-  theme: PropTypes.object.isRequired,
-  state: PropTypes.object.isRequired,
-  setState: PropTypes.func.isRequired,
-  count: PropTypes.number.isRequired
-}
-
-Star.propTypes = {
-  position: PropTypes.array,
-  radius: PropTypes.number,
-  sections: PropTypes.number
-}
-
-DysonSphere.propTypes = {
-  position: PropTypes.array,
-  radius: PropTypes.number
-}
-Splash.propTypes = {
-  theme: PropTypes.object.isRequired,
-  state: PropTypes.object.isRequired,
-  setState: PropTypes.func.isRequired
-}
-
-Nucleus.propTypes = {
-  index: PropTypes.number,
-  position: PropTypes.array,
-  radius: PropTypes.number,
-  sections: PropTypes.number,
-  distortion: PropTypes.number,
-  speed: PropTypes.number,
-  color: PropTypes.array,
-  emission: PropTypes.number
-}
-
-Electron.propTypes = {
-  position: PropTypes.array,
-  rotation: PropTypes.array,
-  radius: PropTypes.number,
-  buffer: PropTypes.number
-}
-
-Camera.propTypes = {
-  position: PropTypes.array
-}
-
-Orbital.propTypes = {
-  position: PropTypes.array,
-  radius: PropTypes.number,
-  buffer: PropTypes.number,
-  color: PropTypes.array,
-  count: PropTypes.number,
-  width: PropTypes.number
-}
-
-SplashText.propTypes = {
-  position: PropTypes.array,
-  title: PropTypes.string,
-  subtitle: PropTypes.string,
-  font: PropTypes.string,
-  size: PropTypes.number,
-  extrude: PropTypes.number
-}
-
-Internals.propTypes = {
-  rfactor: PropTypes.number
-}
-
-function Navigation ({
-  ...props
-}) {
-  const { camera, gl: { domElement } } = useThree()
-
-  return (
-    <OrbitControls
-      camera={camera}
-      domElement={domElement}
-      enableZoom={true}
-      enablePan={true}
-      enableRotate={true}
-      minPolarAngle={-1 * Math.PI * 2}
-      maxPolarAngle={Math.PI * 2}
-      minAzimuthAngle={-1 * Math.PI * 2}
-      maxAzimuthAngle={Math.PI * 2}
-      {...props}
-    />
-  )
-}
-
-function Camera ({
-  position = [-100, -100, -100],
-  ...props
-}) {
-  const groupRef = React.useRef(null)
-  const cameraRef = React.useRef(null)
-  useFrame((state, delata) => {
-    cameraRef.current.updateProjectionMatrix()
-    cameraRef.current.lookAt(0, 20, 0)
-  })
-  return (
-    <group
-      ref={groupRef}
-    >
-      <PerspectiveCamera
-        ref={cameraRef}
-        far={2500}
-        near={0.001}
-        fov={75}
-        // makeDefault
-        position={position}
-        resolution={[window.innerWidth, window.innerHeight]}
-        {...props}
-      />
-    </group>
-
-  )
-}
-
-function Internals ({
-  rfactor = 0.01,
-  ...props
-}) {
-  const {
-    scene,
-    gl
-  } = useThree()
-  useFrame((state) => {
-    scene.rotation.y += 0.001
-    gl.outputEncoding = THREE.sRGBEncoding
-    gl.setPixelRatio(window.devicePixelRatio)
-    gl.setSize(window.innerWidth, window.innerHeight)
-  })
-  return (
-    <group>
-      <Camera/>
-      <Navigation/>
-    </group>
-  )
-}
+// ParticleZoo.propTypes = {
+//   theme: PropTypes.object.isRequired,
+//   state: PropTypes.object.isRequired,
+//   setState: PropTypes.func.isRequired,
+//   count: PropTypes.number.isRequired
+// }
 
 function Star ({
   position = [0, 0, 0],
   radius = 1,
   sections = 64,
+  visible = true,
   ...props
 }) {
   const groupRef = React.useRef(null)
@@ -442,7 +313,7 @@ function Star ({
     <group
       ref={groupRef}
       position={position}
-      visible={true}
+      visible={visible}
     >
       <mesh
         ref={meshRef}
@@ -523,9 +394,17 @@ function Star ({
   )
 }
 
+Star.propTypes = {
+  position: PropTypes.array,
+  radius: PropTypes.number,
+  sections: PropTypes.number,
+  visible: PropTypes.bool
+}
+
 function DysonSphere ({
   position = [0, 0, 0],
   radius = 1,
+  visible = false,
   ...props
 }) {
   const groupRef = React.useRef(null)
@@ -623,7 +502,7 @@ function DysonSphere ({
       }
     `,
     glsl`
-      // #define numberOfTextures 4
+      #define numberOfTextures 4
       varying vec2 vUv;
       varying vec3 vPosition;
       varying vec3 vNormal;
@@ -645,9 +524,11 @@ function DysonSphere ({
         return fract(vec2(p.x * p.y * 95.4337, p.x * p.y * 97.597));
       }
 
+      // this implementation does not work well.
+      // https://webglfundamentals.org/webgl/lessons/webgl-qna-how-to-bind-an-array-of-textures-to-a-webgl-shader-uniform-.html
       // vec4 getSampleFromArray(sampler2D texes[4], int ndx, vec2 uv) {
       //   vec4 color = vec4(0.);
-      //   for (int i = 0; i < numberOfTextures; i++) {
+      //   for (int i=0; i<numberOfTextures; ++i) {
       //     vec4 c = texture2D(texes[i], uv);
       //     if (i == ndx) {
       //       color += c;
@@ -684,7 +565,7 @@ function DysonSphere ({
   )
   extend({ DysonSphereMaterial, OuterSphereMaterial })
   return (
-    <group ref={groupRef} visible={true}>
+    <group ref={groupRef} visible={visible}>
       <CubeCamera>
         {(texture) => (
           <group>
@@ -714,193 +595,47 @@ function DysonSphere ({
   )
 }
 
-function Nucleus ({
-  position = [0, 0, 0],
-  radius = 5,
-  sections = 64,
-  index = 0,
-  color = [0.06274509803921569, 0.13333333333333333, 0.9333333333333333],
-  distortion = 0.2,
-  speed = 3,
-  emission = 0.4,
-  ...props
-}) {
-  const groupRef = React.useRef(null)
-  const nucleusRef = React.useRef(null)
-  const materialRef = React.useRef(null)
-  useFrame(() => {
-    materialRef.current.color = new THREE.Color(
-      Math.random(),
-      Math.random(),
-      Math.random()
-    )
-    materialRef.current.emissive = new THREE.Color(
-      Math.random(),
-      Math.random(),
-      Math.random()
-    )
-  })
-  return (
-    <group
-      ref={groupRef}
-      key={`${index}-nucleus-group`}
-      position={position}
-    >
-      <Sphere
-        ref={nucleusRef}
-        key={`${index}-nucleus`}
-        args={[radius, sections, sections]}
-      >
-        <MeshDistortMaterial
-          ref={materialRef}
-          speed={speed}
-          distort={distortion}
-          color={color}
-          emissive={color}
-          emissiveIntensity={emission}
-          clearcoat={1}
-          side={THREE.DoubleSide}
-          depthTest={true}
-          depthWrite={true}
-          vertexColors={true}
-        />
-      </Sphere>
-    </group>
-  )
+DysonSphere.propTypes = {
+  position: PropTypes.array,
+  radius: PropTypes.number,
+  visible: PropTypes.bool
 }
 
-function Orbital ({
-  position = [0, 0, 0],
-  radius = 5,
-  buffer = 0.30,
-  color = [0.06274509803921569, 0.13333333333333333, 0.9333333333333333],
-  count = 3,
-  width = 0.02,
-  ...props
-}) {
-  const points = React.useMemo(() => {
-    return new THREE.EllipseCurve(
-      0, 0,
-      radius + (radius * buffer), radius + (radius * buffer),
-      0, 2 * Math.PI,
-      false,
-      0
-    ).getPoints(lineResolution)
-  }, [])
-  const groupRef = React.useRef(null)
-  return (
-    <group ref={groupRef} position={position}>
-      {
-        Object.keys(Array.from(Array(count))).map((i) => {
-          return (
-            <mesh key={`${i}-orbital-mesh`}>
-              <Line
-                key={`${i}-orbital-line`}
-                worldUnits
-                points={points}
-                color={new THREE.Color(
-                  color[0] + Math.random() * 0.1,
-                  color[1] + Math.random() * 0.1,
-                  color[2] + Math.random() * 0.1
-                )}
-                dashed={true}
-                lineWidth={lineWidth}
-                gapSize={0.1}
-                dashSize={1}
-                rotation={[
-                  // rotates orbital lines "smoothly" around all axes
-                  i % 2 === 0 ? Math.PI / i : -Math.PI / i,
-                  i % 2 === 0 ? -Math.PI / i : Math.PI / i,
-                  i % 2 === 0 ? Math.PI / i : 0
-                ]}
-              >
-              </Line>
-              <Electron
-                key={`${i}-orbital-electron`}
-                radius={radius}
-                rotation={[
-                  i % 2 === 0 ? Math.PI / i : -Math.PI / i,
-                  i % 2 === 0 ? -Math.PI / i : Math.PI / i,
-                  i % 2 === 0 ? Math.PI / i : 0
-                ]}
-              />
-            </mesh>
-          )
-        })
-      }
-    </group>
-  )
-}
+// NucleusX.propTypes = {
+//   index: PropTypes.number,
+//   position: PropTypes.array,
+//   radius: PropTypes.number,
+//   sections: PropTypes.number,
+//   distortion: PropTypes.number,
+//   speed: PropTypes.number,
+//   color: PropTypes.array,
+//   emission: PropTypes.number
+// }
 
-function Electron ({
-  position = [0, 0, 0],
-  rotation = [0, 0, 0],
-  radius = 5,
-  buffer = 0.30,
-  ...props
-}) {
-  useFrame((state, delta) => {
-    const t = state.clock.getElapsedTime()
-    meshRef.current.position.set(
-      Math.sin(t) * (radius + (radius * buffer)),
-      (Math.cos(t) * (radius + (radius * buffer)) * Math.atan(t)) / Math.PI / 1.25,
-      0
-    )
-    materialRef.current.color = new THREE.Color(
-      Math.sin(t) * 0.5 + 0.5,
-      Math.cos(t) * 0.5 + 0.5,
-      Math.sin(t) * 0.5 + 0.5
-    )
-  })
-  const trailRef = React.useRef(null)
-  const meshRef = React.useRef(null)
-  const materialRef = React.useRef(null)
-  return (
-    <group position={position} rotation={rotation}>
-      <Trail
-        ref={trailRef}
-        local
-        width={5}
-        length={6}
-        color={new THREE.Color(2, 1, 10)}
-        attenuation={(t) => t * t}
-      >
-        <mesh
-          ref={meshRef}
-        >
-          <sphereGeometry
-            args={
-              [
-                0.75,
-                64,
-                64
-              ]
-            }
-          />
-          <meshBasicMaterial
-            ref={materialRef}
-            color={
-              [
-                10,
-                1,
-                10
-              ]
-            }
-            toneMapped={false}
-          />
-        </mesh>
-      </Trail>
-    </group>
-  )
-}
+// ElectronX.propTypes = {
+//   position: PropTypes.array,
+//   rotation: PropTypes.array,
+//   radius: PropTypes.number,
+//   buffer: PropTypes.number
+// }
 
-function SplashText ({
+// OrbitalX.propTypes = {
+//   position: PropTypes.array,
+//   radius: PropTypes.number,
+//   buffer: PropTypes.number,
+//   color: PropTypes.array,
+//   count: PropTypes.number,
+//   width: PropTypes.number
+// }
+
+function Words ({
   position = [0, 0, 0],
   title = 'Dark Photon',
   subtitle = 'Engineering solutions for the stars',
   font = 'nasalization_regular',
   size = 15,
   extrude = 10,
+  visible = true,
   ...props
 }) {
   const groupRef = React.useRef(null)
@@ -911,126 +646,473 @@ function SplashText ({
   useFrame((state) => {
     const t = state.clock.getElapsedTime()
     titleRef.current.computeBoundingBox()
-    const center = titleRef.current.boundingBox.getCenter(new THREE.Vector3())
-    // Math.sin(t) * major,
-    // (Math.cos(t) * major * Math.atan(t)) / Math.PI / 1.25,
-    // 0
-    meshRef.current.position.set(
-      // -center.x,
-      Math.sin(t) * 150 - center.x,
-      // -center.y,
-      0,
-      // -center.z
-      // 0,
-      Math.cos(t) * 150 - center.y
-    )
 
+    // temporarily disable rotations
+    // const center = titleRef.current.boundingBox.getCenter(new THREE.Vector3())
+    // meshRef.current.position.set(
+    //   // -center.x,
+    //   Math.sin(t) * 150 - center.x,
+    //   // -center.y,
+    //   0,
+    //   // -center.z
+    //   // 0,
+    //   Math.cos(t) * 150 - center.y
+    // )
+
+    /* updates color of wording */
     titleMaterialRef.current.color = new THREE.Color(
       Math.sin(t * 0.5) * 0.5 + 0.5,
       Math.sin(t * 0.3) * 0.5 + 0.5,
       Math.sin(t * 0.2) * 0.5 + 0.5
     )
-    // console.log(titleMaterialRef)
   })
   return (
     <group
       ref={groupRef}
+      visible={visible}
     >
       {/* <Center top bottom right front back left> */}
-        <mesh ref={meshRef}>
-          <textGeometry
-            ref={titleRef}
-            args={
-              [
-                title,
-                {
-                  font: titleFont,
-                  size,
-                  height: extrude
+        <Center top right>
+          <Billboard>
+            <mesh ref={meshRef}>
+              <textGeometry
+                ref={titleRef}
+                args={
+                  [
+                    title,
+                    {
+                      font: titleFont,
+                      size,
+                      height: extrude
+                    }
+                  ]
                 }
-              ]
-            }
-          />
-          <meshPhysicalMaterial
-            ref={titleMaterialRef}
-            attach='material'
-            wireframe={true}
-            color={
-              new THREE.Color(
-                Math.random(),
-                Math.random(),
-                Math.random()
-              )
-            }
-          />
-        </mesh>
+              />
+              <meshPhysicalMaterial
+                ref={titleMaterialRef}
+                attach='material'
+                wireframe={true}
+                color={
+                  new THREE.Color(
+                    Math.random(),
+                    Math.random(),
+                    Math.random()
+                  )
+                }
+              />
+            </mesh>
+          </Billboard>
+
+        </Center>
       {/* </Center> */}
     </group>
   )
 }
 
-function ParticleZoo ({
-  theme = {},
-  state = {},
-  setState = () => {},
-  count = 1,
+Words.propTypes = {
+  position: PropTypes.array,
+  title: PropTypes.string,
+  subtitle: PropTypes.string,
+  font: PropTypes.string,
+  size: PropTypes.number,
+  extrude: PropTypes.number,
+  visible: PropTypes.bool
+}
+
+function Navigator ({
+  enableZoom = true,
+  enablePan = true,
+  enableRotate = true,
+  enableDamping = true,
+  dampingFactor = 0.05,
+  rotateSpeed = 0.5,
   ...props
 }) {
-  // eslint-disable-next-line no-unused-vars
-  const { scene } = useThree()
-  useFrame((state, delta) => {
-  })
-  return (
-      <group {...props}>
-        <ambientLight />
-        <pointLight position={[10, 10, 10]} />
-        {
-          Object.keys(Array.from(Array(count - 1))).map((i) => {
-            /*  calculate random positions & sizes for spheres */
-            const x = Math.random() *
-              (state.splash.limits.x[1] - state.splash.limits.x[0] + 1) + state.splash.limits.x[0]
-            const y = Math.random() *
-              (state.splash.limits.y[1] - state.splash.limits.y[0] + 1) + state.splash.limits.y[0]
-            const z = Math.random() *
-              (state.splash.limits.z[1] - state.splash.limits.z[0] + 1) + state.splash.limits.z[0]
-            const radius = Math.random() *
-              (state.splash.limits.major[1] - state.splash.limits.major[0] + 1) + state.splash.limits.major[0]
-            // const minor = Math.random() *
-            //   (state.splash.limits.minor[1] - state.splash.limits.minor[0] + 1) + state.splash.limits.minor[0]
+  const {
+    camera,
+    gl:
+    {
+      domElement
+    }
+  } = useThree()
 
-            return (
-              <group key={`zoo-group-${i}`}>
-                <Nucleus
-                  radius={radius}
-                  distortion={0.8}
-                  position={[x, y, z]}
-                >
-                </Nucleus>
-                <Orbital
-                    radius={radius}
-                    position={[x, y, z]}
-                />
-                <Electron
-                  radius={radius}
-                  position={[x, y, z]}
-                />
-              </group>
-            )
-          })
-        }
-      </group>
+  return (
+    <OrbitControls
+      camera={camera}
+      domElement={domElement}
+      enableZoom={enableZoom}
+      enablePan={enablePan}
+      enableRotate={enableRotate}
+      enableDamping={enableDamping}
+      dampingFactor={dampingFactor}
+      rotateSpeed={rotateSpeed}
+      args={[camera, domElement]}
+      // minPolarAngle={-1 * Math.PI * 2}
+      // maxPolarAngle={Math.PI * 2}
+      // minAzimuthAngle={-1 * Math.PI * 2}
+      // maxAzimuthAngle={Math.PI * 2}
+      {...props}
+    />
   )
 }
 
+Navigator.propTypes = {
+  enableZoom: PropTypes.bool,
+  enablePan: PropTypes.bool,
+  enableRotate: PropTypes.bool,
+  enableDamping: PropTypes.bool,
+  dampingFactor: PropTypes.number,
+  rotateSpeed: PropTypes.number
+}
+
+function Observer ({
+  position = [-100, -100, -100],
+  rotation = [0, 0, 0],
+  ...props
+}) {
+  const groupRef = React.useRef(null)
+  const cameraRef = React.useRef(null)
+  useFrame((state, delata) => {
+    cameraRef.current.updateProjectionMatrix()
+    cameraRef.current.lookAt(0, 20, 0)
+  })
+  return (
+    <group
+      ref={groupRef}
+    >
+      <PerspectiveCamera
+        makeDefault
+        ref={cameraRef}
+        far={2500}
+        near={0.001}
+        fov={75}
+        // makeDefault
+        position={position}
+        resolution={[window.innerWidth, window.innerHeight]}
+        {...props}
+      />
+    </group>
+
+  )
+}
+
+Observer.propTypes = {
+  position: PropTypes.array,
+  rotation: PropTypes.array
+}
+
+function Internals ({
+  rfactor = 0.01,
+  ...props
+}) {
+  const {
+    scene,
+    gl
+  } = useThree()
+  useFrame((state) => {
+    scene.rotation.y += 0.001
+    gl.outputEncoding = THREE.sRGBEncoding
+    gl.setPixelRatio(window.devicePixelRatio)
+    gl.setSize(window.innerWidth, window.innerHeight)
+  })
+  return (
+    <group>
+      <Observer/>
+      <Navigator/>
+    </group>
+  )
+}
+
+Internals.propTypes = {
+  rfactor: PropTypes.number
+}
+
+export function Proton ({
+  position = [0, 0, 0],
+  rotation = [0, 0, 0],
+  radius = 5,
+  sections = 32,
+  color = [0.5, 0.5, 0.5],
+  ...props
+}) {
+  const groupRef = React.useRef(null)
+  const meshRef = React.useRef(null)
+  const geomRef = React.useRef(null)
+  const materialRef = React.useRef(null)
+  return (
+    <group ref={groupRef}>
+      <mesh ref={meshRef}>
+        <sphereGeometry
+          ref={geomRef}
+          args={[
+            radius,
+            sections,
+            sections
+          ]}
+        />
+        <meshBasicMaterial
+          ref={materialRef}
+          attach='material'
+          color={color}
+        />
+      </mesh>
+    </group>
+  )
+}
+
+Proton.propTypes = {
+  position: PropTypes.array,
+  rotation: PropTypes.array,
+  radius: PropTypes.number,
+  sections: PropTypes.number,
+  color: PropTypes.array
+}
+
+// function NucleusX ({
+//   position = [0, 0, 0],
+//   radius = 5,
+//   sections = 64,
+//   index = 0,
+//   color = [0.06274509803921569, 0.13333333333333333, 0.9333333333333333],
+//   distortion = 0.2,
+//   speed = 3,
+//   emission = 0.4,
+//   ...props
+// }) {
+//   const groupRef = React.useRef(null)
+//   const nucleusRef = React.useRef(null)
+//   const materialRef = React.useRef(null)
+//   useFrame(() => {
+//     materialRef.current.color = new THREE.Color(
+//       Math.random(),
+//       Math.random(),
+//       Math.random()
+//     )
+//     materialRef.current.emissive = new THREE.Color(
+//       Math.random(),
+//       Math.random(),
+//       Math.random()
+//     )
+//   })
+//   return (
+//     <group
+//       ref={groupRef}
+//       key={`${index}-nucleus-group`}
+//       position={position}
+//     >
+//       <Sphere
+//         ref={nucleusRef}
+//         key={`${index}-nucleus`}
+//         args={[radius, sections, sections]}
+//       >
+//         <MeshDistortMaterial
+//           ref={materialRef}
+//           speed={speed}
+//           distort={distortion}
+//           color={color}
+//           emissive={color}
+//           emissiveIntensity={emission}
+//           clearcoat={1}
+//           side={THREE.DoubleSide}
+//           depthTest={true}
+//           depthWrite={true}
+//           vertexColors={true}
+//         />
+//       </Sphere>
+//     </group>
+//   )
+// }
+
+// function OrbitalX ({
+//   position = [0, 0, 0],
+//   radius = 5,
+//   buffer = 0.30,
+//   color = [0.06274509803921569, 0.13333333333333333, 0.9333333333333333],
+//   count = 3,
+//   width = 0.02,
+//   ...props
+// }) {
+//   const points = React.useMemo(() => {
+//     return new THREE.EllipseCurve(
+//       0, 0,
+//       radius + (radius * buffer), radius + (radius * buffer),
+//       0, 2 * Math.PI,
+//       false,
+//       0
+//     ).getPoints(lineResolution)
+//   }, [])
+//   const groupRef = React.useRef(null)
+//   return (
+//     <group ref={groupRef} position={position}>
+//       {
+//         Object.keys(Array.from(Array(count))).map((i) => {
+//           return (
+//             <mesh key={`${i}-orbital-mesh`}>
+//               <Line
+//                 key={`${i}-orbital-line`}
+//                 worldUnits
+//                 points={points}
+//                 color={new THREE.Color(
+//                   color[0] + Math.random() * 0.1,
+//                   color[1] + Math.random() * 0.1,
+//                   color[2] + Math.random() * 0.1
+//                 )}
+//                 dashed={true}
+//                 lineWidth={lineWidth}
+//                 gapSize={0.1}
+//                 dashSize={1}
+//                 rotation={[
+//                   // rotates orbital lines "smoothly" around all axes
+//                   i % 2 === 0 ? Math.PI / i : -Math.PI / i,
+//                   i % 2 === 0 ? -Math.PI / i : Math.PI / i,
+//                   i % 2 === 0 ? Math.PI / i : 0
+//                 ]}
+//               >
+//               </Line>
+//               <ElectronX
+//                 key={`${i}-orbital-electron`}
+//                 radius={radius}
+//                 rotation={[
+//                   i % 2 === 0 ? Math.PI / i : -Math.PI / i,
+//                   i % 2 === 0 ? -Math.PI / i : Math.PI / i,
+//                   i % 2 === 0 ? Math.PI / i : 0
+//                 ]}
+//               />
+//             </mesh>
+//           )
+//         })
+//       }
+//     </group>
+//   )
+// }
+
+// function ElectronX ({
+//   position = [0, 0, 0],
+//   rotation = [0, 0, 0],
+//   radius = 5,
+//   buffer = 0.30,
+//   ...props
+// }) {
+//   useFrame((state, delta) => {
+//     const t = state.clock.getElapsedTime()
+//     meshRef.current.position.set(
+//       Math.sin(t) * (radius + (radius * buffer)),
+//       (Math.cos(t) * (radius + (radius * buffer)) * Math.atan(t)) / Math.PI / 1.25,
+//       0
+//     )
+//     materialRef.current.color = new THREE.Color(
+//       Math.sin(t) * 0.5 + 0.5,
+//       Math.cos(t) * 0.5 + 0.5,
+//       Math.sin(t) * 0.5 + 0.5
+//     )
+//   })
+//   const trailRef = React.useRef(null)
+//   const meshRef = React.useRef(null)
+//   const materialRef = React.useRef(null)
+//   return (
+//     <group position={position} rotation={rotation}>
+//       <Trail
+//         ref={trailRef}
+//         local
+//         width={5}
+//         length={6}
+//         color={new THREE.Color(2, 1, 10)}
+//         attenuation={(t) => t * t}
+//       >
+//         <mesh
+//           ref={meshRef}
+//         >
+//           <sphereGeometry
+//             args={
+//               [
+//                 0.75,
+//                 64,
+//                 64
+//               ]
+//             }
+//           />
+//           <meshBasicMaterial
+//             ref={materialRef}
+//             color={
+//               [
+//                 10,
+//                 1,
+//                 10
+//               ]
+//             }
+//             toneMapped={false}
+//           />
+//         </mesh>
+//       </Trail>
+//     </group>
+//   )
+// }
+
+// function ParticleZoo ({
+//   theme = {},
+//   state = {},
+//   setState = () => {},
+//   count = 1,
+//   ...props
+// }) {
+//   // eslint-disable-next-line no-unused-vars
+//   const { scene } = useThree()
+//   useFrame((state, delta) => {
+//   })
+//   return (
+//       <group {...props}>
+//         <ambientLight />
+//         <pointLight position={[10, 10, 10]} />
+//         {
+//           Object.keys(Array.from(Array(count - 1))).map((i) => {
+//             /*  calculate random positions & sizes for spheres */
+//             const x = Math.random() *
+//               (state.splash.limits.x[1] - state.splash.limits.x[0] + 1) + state.splash.limits.x[0]
+//             const y = Math.random() *
+//               (state.splash.limits.y[1] - state.splash.limits.y[0] + 1) + state.splash.limits.y[0]
+//             const z = Math.random() *
+//               (state.splash.limits.z[1] - state.splash.limits.z[0] + 1) + state.splash.limits.z[0]
+//             const radius = Math.random() *
+//               (state.splash.limits.major[1] - state.splash.limits.major[0] + 1) + state.splash.limits.major[0]
+//             // const minor = Math.random() *
+//             //   (state.splash.limits.minor[1] - state.splash.limits.minor[0] + 1) + state.splash.limits.minor[0]
+
+//             return (
+//               <group key={`zoo-group-${i}`}>
+//                 <NucleusX
+//                   radius={radius}
+//                   distortion={0.8}
+//                   position={[x, y, z]}
+//                 >
+//                 </NucleusX>
+//                 <OrbitalX
+//                     radius={radius}
+//                     position={[x, y, z]}
+//                 />
+//                 <ElectronX
+//                   radius={radius}
+//                   position={[x, y, z]}
+//                 />
+//               </group>
+//             )
+//           })
+//         }
+//       </group>
+//   )
+// }
 export function Splash ({
   theme = {},
   state = {},
+  visible = true,
   setState = () => {},
   ...props
 }) {
   return (
     <div
       style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
         width: '100vw',
         height: '100vh'
 
@@ -1051,7 +1133,7 @@ export function Splash ({
           attach='background'
           args={
             // [`${theme.palette.primary.dark}`]
-            [new THREE.Color('#000000')]
+            [new THREE.Color(state.splash.background)]
           }
         />
         <pointLight
@@ -1084,23 +1166,25 @@ export function Splash ({
           <DysonSphere
             radius={65}
           />
-          <ParticleZoo
+          {/* <ParticleZoo
             theme={theme}
             state={state}
             setState={setState}
             count={20}
-          />
+          /> */}
           <Billboard
               follow={false}
               lockX={false}
               lockY={false}
               lockZ={false}
           >
-              <SplashText/>
+              <Words/>
 
           </Billboard>
         </Float>
-
+        {/* <Proton
+            position={[45, 145, 45]}
+        /> */}
           {/* <primitive object={new THREE.AxesHelper(100)} /> */}
 
         <EffectComposer>
@@ -1115,8 +1199,6 @@ export function Splash ({
             bits={32}
             opacity={0.9}
             blendFunction={BlendFunction.ADD}
-            // blendFunction={BlendFunction.COLOR_DODGE}
-            // blendFunction={new THREE.}
           />
         </EffectComposer>
         </Canvas>
@@ -1125,4 +1207,11 @@ export function Splash ({
     </div>
 
   )
+}
+
+Splash.propTypes = {
+  theme: PropTypes.object.isRequired,
+  visible: PropTypes.bool.isRequired,
+  state: PropTypes.object.isRequired,
+  setState: PropTypes.func.isRequired
 }

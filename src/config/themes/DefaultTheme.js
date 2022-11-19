@@ -1,9 +1,9 @@
 export const DefaultTheme = {
   palette: {
     primary: {
-      light: '#4B3C58',
-      main: '#4B3C58',
-      dark: '#3E3D3F',
+      light: '#B491D3',
+      main: '#573A73',
+      dark: '#2D2B2F',
       contrastText: '#fff'
     },
     secondary: {
@@ -19,8 +19,8 @@ export const DefaultTheme = {
 export const DarkTheme = {
   palette: {
     primary: {
-      light: '#B491D3',
-      main: '#3B3244',
+      light: '#8E5DB9',
+      main: '#573A73',
       dark: '#2D2B2F',
       contrastText: '#fff'
     },
@@ -37,9 +37,9 @@ export const DarkTheme = {
 export const LightTheme = {
   palette: {
     primary: {
-      light: '#C59BEA',
-      main: '#83678E',
-      dark: '#8C8A8E',
+      light: '#D7BEEC',
+      main: '#9B80A6',
+      dark: '#6A656F',
       contrastText: '#fff'
     },
     secondary: {
