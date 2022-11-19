@@ -11,21 +11,21 @@ import {
 } from '@fortawesome/react-fontawesome'
 
 import {
-  faFluxCapacitor,
-  faStarship,
+  // faFluxCapacitor,
+  // faStarship,
   faSunBright,
   faMoon,
-  faHeadSideBrain,
+  // faHeadSideBrain,
   faVolumeSlash,
   faVolumeUp,
   faFilmSimple,
   faFilmSlash
 } from '@fortawesome/pro-duotone-svg-icons'
 
-import {
-  faTwitter,
-  faGithub
-} from '@fortawesome/free-brands-svg-icons'
+// import {
+//   faTwitter,
+//   faGithub
+// } from '@fortawesome/free-brands-svg-icons'
 
 import {
   Stack,
@@ -47,33 +47,33 @@ export function ControlBar ({
 }) {
   const [play] = useSound(boopSound)
   const containerRef = React.useRef(null)
-  const sections = [
-    {
-      icon: faStarship,
-      name: 'About',
-      tooltip: 'About Us'
-    },
-    {
-      icon: faFluxCapacitor,
-      name: 'Services',
-      tooltip: 'Discover Services'
-    },
-    {
-      icon: faTwitter,
-      name: 'Twitter',
-      tooltip: 'Follow us on Twitter'
-    },
-    {
-      icon: faGithub,
-      name: 'GitHub',
-      tooltip: 'View our code repositories'
-    },
-    {
-      icon: faHeadSideBrain,
-      name: 'Philosophy',
-      tooltip: 'Our Philosophy'
-    }
-  ]
+  // const sections = [
+  //   {
+  //     icon: faStarship,
+  //     name: 'About',
+  //     tooltip: 'About Us'
+  //   },
+  //   {
+  //     icon: faFluxCapacitor,
+  //     name: 'Services',
+  //     tooltip: 'Discover Services'
+  //   },
+  //   {
+  //     icon: faTwitter,
+  //     name: 'Twitter',
+  //     tooltip: 'Follow us on Twitter'
+  //   },
+  //   {
+  //     icon: faGithub,
+  //     name: 'GitHub',
+  //     tooltip: 'View our code repositories'
+  //   },
+  //   {
+  //     icon: faHeadSideBrain,
+  //     name: 'Philosophy',
+  //     tooltip: 'Our Philosophy'
+  //   }
+  // ]
   // eslint-disable-next-line no-unused-vars
   const [userTheme, setUserTheme] = React.useState('dark')
   // eslint-disable-next-line no-unused-vars
@@ -176,7 +176,7 @@ export function ControlBar ({
               marginRight: 'auto',
               marginLeft: 'auto',
               display: 'flex',
-              flexGrow: sections.length
+              flexGrow: Configuration.settings.appBar.sections.length
             }}
           >
             <Stack
@@ -184,14 +184,14 @@ export function ControlBar ({
               spacing={theme.spacing(2)}
               sx={{
                 display: 'flex',
-                flexGrow: sections.length,
+                flexGrow: Configuration.settings.appBar.sections.length,
                 border: '1px dashed red'
                 // width: '75%'
                 // padding: 5
               }}
             >
 
-                    {sections.map((section, index) => {
+                    {Configuration.settings.appBar.sections.map((section, index) => {
                       return (
                         <Box
                           key={`controlbar-section-container-${section.name.toLowerCase()}`}

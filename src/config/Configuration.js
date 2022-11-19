@@ -3,7 +3,6 @@ import {
   faFluxCapacitor,
   faStarship,
   faHeadSideBrain
-
 } from '@fortawesome/pro-duotone-svg-icons'
 import {
   faTwitter,
