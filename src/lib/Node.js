@@ -1,9 +1,15 @@
 
 const AWS = require('aws-sdk')
 const EventEmitter = require('events')
+export class Node extends EventEmitter {
+  #region = 'us-east-1'
+  #endpoint = process.env.DYNAMODB_ENDPOINT
+    ? process.env.DYNAMODB_ENDPOINT
+    : 'http://localhost:8000'
 
-class Node extends EventEmitter {
   #table = 'darkphoton'
+  #access = null
+  #secret = null
 
   async #tables () {
     const tables = await this.dynamoClient.listTables().promise()
@@ -11,19 +17,29 @@ class Node extends EventEmitter {
   }
 
   constructor ({
+    access,
+    secret,
+    region,
+    endpoint,
     table,
     pk,
     sk
   }) {
     super()
+    this.access = access
+    this.secret = secret
+    this.region = region
+    this.endpoint = endpoint
     this.table = table || this.#table
     this.pk = pk
     this.sk = sk
     this.dynamoClient = new AWS.DynamoDB({
-      endpoint: new AWS.Endpoint(process.env.DYNAMODB_ENDPOINT)
+      region: this.region || this.#region,
+      endpoint: new AWS.Endpoint(endpoint || this.#endpoint)
     })
     this.documentClient = new AWS.DynamoDB.DocumentClient({
-      endpoint: new AWS.Endpoint(process.env.DYNAMODB_ENDPOINT)
+      region: this.region || this.#region,
+      endpoint: new AWS.Endpoint(endpoint || this.#endpoint)
     })
   }
 
@@ -91,8 +107,8 @@ class Node extends EventEmitter {
   }
 }
 
-module.exports = {
-  Node
-  // People,
-  // Person
-}
+// module.exports = {
+//   Node
+//   // People,
+//   // Person
+// }
