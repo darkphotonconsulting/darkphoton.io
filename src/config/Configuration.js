@@ -8,6 +8,14 @@ import {
   faTwitter,
   faGithub
 } from '@fortawesome/free-brands-svg-icons'
+
+/**
+ * @typedef {Object} Configuration
+ * @property {string} title
+ * @property {string} subtitle
+ * @property {Array} description
+ * @property {Object} settings
+ */
 export const Configuration = {
   title: 'Dark Photon IT, LLC.',
   subtitle: 'solutions for the stars',
