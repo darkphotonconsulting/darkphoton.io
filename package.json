@@ -1,7 +1,7 @@
 {
-  "name": "darkphoton.io",
+  "name": "@darkphotonconsulting/darkphoton.io",
   "version": "0.1.0",
-  "description": "Company Website",
+  "description": "Dark Photon Website",
   "private": true,
   "repository": {
     "type": "git",
