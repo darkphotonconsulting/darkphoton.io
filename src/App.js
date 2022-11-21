@@ -39,6 +39,7 @@ import {
 
 import Landing from './components/Landing.jsx'
 import Services from './components/Services.jsx'
+import About from './components/About.jsx'
 
 // eslint-disable-next-line no-unused-vars
 import Crumb from './components/primitives/Crumb.jsx'
@@ -242,6 +243,11 @@ export function App ({
                       <Box>
                         <Crumb/>
                         <Services/>
+                      </Box>
+                    </Route>
+                    <Route exact path='/about'>
+                      <Box>
+                        <About/>
                       </Box>
                     </Route>
                   </Router>
