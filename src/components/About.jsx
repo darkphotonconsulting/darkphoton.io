@@ -1,42 +1,42 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 // eslint-disable-next-line no-unused-vars
-import { Node } from '../lib/Node.js'
+import { Node } from '../../src/lib/Node.js'
 import {
-  // Link as RouterLink,
-  // Route,
-  // Routes,
   useLocation,
   useHistory,
   MemoryRouter,
   withRouter
-  // useLocation
 } from 'react-router-dom'
 
 import {
-  // eslint-disable-next-line no-unused-vars
   Grid,
   Box
-  // Typography
 } from '@mui/material'
-About.propTypes = {
-  limit: PropTypes.number
-}
+
 function About ({
+  state = {},
+  setState = () => {},
   limit = 3,
+  pk = 'person#Aaron Samuel',
+  sk = 'profile',
   ...props
 }) {
-  React.useEffect(async () => {
-    const node = new Node({
-      pk: 'person#Aaron Samuel',
-      sk: 'profile'
-    })
-    const data = await node.query({
-      pk: 'person#Aaron Samuel',
-      sk: 'profile'
-    })
-    console.log(data)
-  }, [])
+  React.useEffect(() => {
+    const fetchData = async () => {
+      const node = new Node({
+        pk,
+        sk
+      })
+      const data = await node.query({
+        pk,
+        sk
+      })
+      console.log(data)
+      console.log('env: ', process.env)
+    }
+    fetchData()
+  }, [state])
   // eslint-disable-next-line no-unused-vars
   const location = useLocation()
   // eslint-disable-next-line no-unused-vars
@@ -51,13 +51,21 @@ function About ({
             item
           >
             <Box>
-              <h1>About</h1>
+              <h1>Aboutl</h1>
             </Box>
           </Grid>
         </Grid>
       </div>
     </MemoryRouter>
   )
+}
+
+About.propTypes = {
+  state: PropTypes.object,
+  setState: PropTypes.func,
+  limit: PropTypes.number,
+  pk: PropTypes.string,
+  sk: PropTypes.string
 }
 
 export default withRouter(About)
