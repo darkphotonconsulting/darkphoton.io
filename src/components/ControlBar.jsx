@@ -11,21 +11,13 @@ import {
 } from '@fortawesome/react-fontawesome'
 
 import {
-  // faFluxCapacitor,
-  // faStarship,
   faSunBright,
   faMoon,
-  // faHeadSideBrain,
   faVolumeSlash,
   faVolumeUp,
   faFilmSimple,
   faFilmSlash
 } from '@fortawesome/pro-duotone-svg-icons'
-
-// import {
-//   faTwitter,
-//   faGithub
-// } from '@fortawesome/free-brands-svg-icons'
 
 import {
   Stack,
@@ -47,33 +39,6 @@ export function ControlBar ({
 }) {
   const [play] = useSound(boopSound)
   const containerRef = React.useRef(null)
-  // const sections = [
-  //   {
-  //     icon: faStarship,
-  //     name: 'About',
-  //     tooltip: 'About Us'
-  //   },
-  //   {
-  //     icon: faFluxCapacitor,
-  //     name: 'Services',
-  //     tooltip: 'Discover Services'
-  //   },
-  //   {
-  //     icon: faTwitter,
-  //     name: 'Twitter',
-  //     tooltip: 'Follow us on Twitter'
-  //   },
-  //   {
-  //     icon: faGithub,
-  //     name: 'GitHub',
-  //     tooltip: 'View our code repositories'
-  //   },
-  //   {
-  //     icon: faHeadSideBrain,
-  //     name: 'Philosophy',
-  //     tooltip: 'Our Philosophy'
-  //   }
-  // ]
   // eslint-disable-next-line no-unused-vars
   const [userTheme, setUserTheme] = React.useState('dark')
   // eslint-disable-next-line no-unused-vars
@@ -582,7 +547,7 @@ export function ControlBar ({
                     >
                       <FontAwesomeIcon
                         icon={
-                          userTheme === 'light' ? faMoon : faSunBright
+                          state.theme.mode === 'light' ? faMoon : faSunBright
                         }
                       />
                     </IconButton>
