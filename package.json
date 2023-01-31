@@ -35,6 +35,7 @@
     "express": "^4.18.2",
     "express-cors": "^0.0.3",
     "glslify-loader": "^2.0.0",
+    "http-proxy-middleware": "^2.0.6",
     "postprocessing": "^6.29.1",
     "prop-types": "^15.8.1",
     "raw-loader": "^4.0.2",

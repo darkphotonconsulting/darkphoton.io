@@ -4,6 +4,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import {
   // eslint-disable-next-line no-unused-vars
+  Paper,
   Grid,
   Stack,
   Box,
@@ -13,14 +14,10 @@ import {
 import { useSpring, animated } from 'react-spring'
 
 import {
-  // Link as RouterLink,
-  // Route,
-  // Routes,
   useLocation,
   useHistory,
   MemoryRouter,
   withRouter
-  // useLocation
 } from 'react-router-dom'
 
 // eslint-disable-next-line no-unused-vars
@@ -28,18 +25,19 @@ const landingSections = [
   {
     title: 'Solutions Architecture',
     description: 'From the ground up, we can help you build your solution.',
+    data: {},
     color: 'linear-gradient(45deg, #6B7CFE 30%, #EE53FF 90%)'
   },
   {
     title: 'Data Science',
     description: 'Doing the data things',
+    data: {},
     color: 'linear-gradient(45deg, #6B7CFE 30%, #EE53FF 90%)'
   }
 ]
 function Title ({
   theme = {},
   text = 'Dark Photon IT Consultants, LLC',
-  // sub = 'Engineering solutions for the stars',
   ...props
 }) {
   const animations = useSpring({
@@ -82,7 +80,6 @@ function Title ({
 Title.propTypes = {
   theme: PropTypes.object,
   text: PropTypes.string
-  // sub: PropTypes.string
 }
 
 function Subtitle ({
@@ -119,7 +116,9 @@ function Subtitle ({
         justifyContent: 'center',
         alignItems: 'center',
         alignContent: 'center',
-        textAlign: 'center'
+        textAlign: 'center',
+        flexGrow: 5,
+        flexShrink: 5
       }}
     >
       <animated.div
@@ -140,53 +139,59 @@ Subtitle.propTypes = {
 
 function Section ({
   title = 'Section',
+  // theme = {},
   description = 'Section description',
   color = 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
   ...props
 }) {
   return (
-    <Box
+    <Paper
       sx={{
-        display: 'flex',
-        alignContent: 'center',
-        alignItems: 'center',
-        textAlign: 'center',
-        justifyContent: 'center',
-        width: '75%',
-        flexGrow: landingSections.length,
-        flexShrink: landingSections.length / landingSections.length
-        // height: '33%'
+        display: 'flex'
       }}
     >
-      <Typography
-        variant='h2'
+      <Box
         sx={{
-          typography: {
-            xs: 'h6',
-            sm: 'h6',
-            md: 'h6',
-            lg: 'h2',
-            xl: 'h2'
-          }
+          display: 'flex',
+          alignContent: 'center',
+          alignItems: 'center',
+          textAlign: 'center',
+          justifyContent: 'center',
+          width: '75%',
+          flexGrow: landingSections.length,
+          flexShrink: landingSections.length
         }}
       >
-        {title}
-      </Typography>
-      <Typography
-        sx={{
-          typography: {
-            xs: 'body2',
-            sm: 'body2',
-            md: 'body2',
-            lg: 'body1',
-            xl: 'body1'
-          }
-        }}
-        variant='subtitle'
-      >
-        {description}
-      </Typography>
-    </Box>
+        <Typography
+          variant='h3'
+          sx={{
+            typography: {
+              xs: 'h6',
+              sm: 'h6',
+              md: 'h6',
+              lg: 'h2',
+              xl: 'h2'
+            }
+          }}
+        >
+          {title}
+        </Typography>
+        <Typography
+          sx={{
+            typography: {
+              xs: 'body2',
+              sm: 'body2',
+              md: 'body2',
+              lg: 'body1',
+              xl: 'body1'
+            }
+          }}
+          variant='subtitle'
+        >
+          {description}
+        </Typography>
+      </Box>
+    </Paper>
   )
 }
 
@@ -209,11 +214,12 @@ function Sections ({
       alignContent='center'
       style={{
         display: 'flex',
-        width: '80%',
+        width: '90%',
+        height: '100%',
         border: '1px solid black',
         padding: 5,
-        flexGrow: 1,
-        flexShrink: 0
+        flexGrow: 10,
+        flexShrink: 10
       }}
     >
       {
@@ -223,11 +229,9 @@ function Sections ({
               style={{
                 display: 'flex',
                 backgroundImage: section.color,
-                borderRadius: '10px',
                 justifyContent: 'center',
                 alignItems: 'center',
                 alignContent: 'center',
-                padding: 5,
                 width: 'inherit',
                 flexGrow: data.length - index,
                 flexShrink: data.length - index,
@@ -275,12 +279,10 @@ function Landing ({
           direction={'column'}
           id={'landing-grid'}
           className={'landing-grid'}
-          alignContent={'center'}
-          justifyContent={'center'}
-          alignItems={'center'}
+          alignContent={'start'}
+          // justifyContent={'center'}
+          // alignItems={'center'}
           style={{
-            padding: 5,
-            margin: 'auto',
             borderRadius: 15,
             width: '100%',
             height: '100%'
@@ -293,10 +295,6 @@ function Landing ({
             alignContent={'center'}
             justifyContent={'center'}
             alignItems={'center'}
-            style={{
-              top: 0,
-              left: 0
-            }}
           >
             <Title
               id={'landing-title-component'}
@@ -318,26 +316,15 @@ function Landing ({
           </Grid>
           <Grid
             item
-            id={'landing-content-item'}
-            className={'landing-content-item'}
+            // id={'landing-sections-item'}
+            className={'landing-sections-item'}
             alignContent={'center'}
             justifyContent={'center'}
             alignItems={'center'}
-            spacing={2}
-            sx={{
-              border: '2px solid purple',
-              borderRadius: 15,
-              margin: 'auto',
-              width: '90%',
-              // height: '90%',
-              padding: 5,
-              display: 'flex',
-              flexDirection: 'row',
-              flexGrow: 5,
-              flexShrink: 0
-            }}
           >
-            <Sections/>
+            <Sections
+              data={landingSections}
+            />
           </Grid>
         </Grid>
     </MemoryRouter>

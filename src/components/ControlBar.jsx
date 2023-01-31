@@ -26,6 +26,9 @@ import {
   AppBar,
   Toolbar,
   IconButton,
+  // SpeedDial,
+  // SpeedDialAction,
+  // SpeedDialIcon,
   Tooltip,
   Slide
 } from '@mui/material'
@@ -45,6 +48,8 @@ export function ControlBar ({
   const [width, setWidth] = React.useState(0)
   // eslint-disable-next-line no-unused-vars
   const [height, setHeight] = React.useState(0)
+  // eslint-disable-next-line no-unused-vars
+  const [services, setServices] = React.useState([])
 
   React.useLayoutEffect(() => {
     setWidth(containerRef.current.offsetWidth)
@@ -52,6 +57,30 @@ export function ControlBar ({
     setHeight(containerRef.current.offsetHeight)
     // console.log('height', height)
   })
+
+  React.useEffect(() => {
+    const fetchServices = async () => {
+      fetch(
+        'http://localhost:3001/services',
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json'
+          }
+        }
+      )
+        .then((res) => {
+          const json = res.json()
+          return json
+        })
+        .then((json) => {
+          if (services.length === 0) {
+            setServices((services) => [...json])
+          }
+        })
+    }
+    fetchServices()
+  }, [services])
 
   const dimensions = {
     width: {
@@ -150,11 +179,84 @@ export function ControlBar ({
               sx={{
                 display: 'flex',
                 flexGrow: Configuration.settings.appBar.sections.length,
-                border: '1px dashed red'
+                flexShrink: Configuration.settings.appBar.sections.length,
+                border: '1px solid red'
                 // width: '75%'
                 // padding: 5
               }}
             >
+                  {/* pulling in a speed dial */}
+                    {/* <Box
+                      style={{
+                        width: '100%',
+                        border: '1px dashed blue',
+                        position: 'absolute',
+                        bottom: 5
+                      }}
+                    >
+                      <SpeedDial
+                        ariaLabel='SpeedDial example'
+                        sx={{
+                          fontSize: {
+                            xs: 'small',
+                            sm: 'medium',
+                            md: 'large',
+                            lg: 'large',
+                            xl: 'large'
+                          },
+                          height: {
+                            xs: '12px',
+                            sm: '24px',
+                            md: '42px',
+                            lg: '42px',
+                            xl: '42px'
+                          },
+                          width: {
+                            xs: '12px',
+                            sm: '24px',
+                            md: '42px',
+                            lg: '42px',
+                            xl: '42px'
+                          }
+
+                        }}
+                        icon={
+                          <SpeedDialIcon
+                            openIcon = {
+                              <FontAwesomeIcon icon={<faMoon/>}
+                              />
+                            }
+                          />
+                        }
+                      >
+                        {services.map((service) => {
+                          return (
+                            <SpeedDialAction
+                              key={service.data.name}
+                              icon={<FontAwesomeIcon icon={<faMoon/>}/>}
+                              tooltipTitle={service.data.name}
+                            >
+
+                            </SpeedDialAction>
+                          )
+                        })}
+
+                      </SpeedDial>
+                    </Box> */}
+                    <Stack direction='column'>
+
+                      <Box
+                        style={{
+                          // display: 'flex',
+                          width: '100%',
+                          border: '1px dashed blue'
+                        }}
+                      >
+                        <IconButton>
+                          <FontAwesomeIcon icon={faMoon}/>
+                        </IconButton>
+                      </Box>
+                    </Stack>
 
                     {Configuration.settings.appBar.sections.map((section, index) => {
                       return (

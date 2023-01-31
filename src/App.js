@@ -8,7 +8,9 @@ import {
   withRouter,
   Switch,
   BrowserRouter as Router,
-  Route
+  Route,
+  useHistory,
+  useLocation
 } from 'react-router-dom'
 
 import PropTypes from 'prop-types'
@@ -55,6 +57,12 @@ export function App ({
   ...props
 }) {
   // eslint-disable-next-line no-unused-vars
+  const history = useHistory()
+  // eslint-disable-next-line no-unused-vars
+  const location = useLocation()
+  console.log('location: ', location)
+  console.log('history: ', history)
+  // eslint-disable-next-line no-unused-vars
   const [state, setState] = React.useState({
     theme: {
       mode: 'dark'
@@ -88,22 +96,27 @@ export function App ({
       }
     }
   })
-
   // update theme based on state
   const theme = responsiveFontSizes(createTheme({
     ...Configuration.themes.find(
       theme => theme.name === state?.theme?.mode
     ).theme
   }))
+  const rootContainerRef = React.useRef(null)
+  const layoutContainerRef = React.useRef(null)
+  const controlContainerRef = React.useRef(null)
 
   return (
     <ThemeProvider
       theme={theme}
-      className={'theme-container'}
+      // className={'theme-container'}
     >
       <CssBaseline />
-      {/* application root */}
+      {/*
+        Application Root Div/Container
+      */}
       <div
+        ref={rootContainerRef}
         id={'root-container'}
         style={{
           height: '100vh',
@@ -118,37 +131,37 @@ export function App ({
           justifyContent: 'center'
         }}
       >
-        {/* application layout */}
+        {/*
+          Application Layout Container
+        */}
         <Grid
+          ref={layoutContainerRef}
           id={'layout-container'}
           container
-          alignItems={'center'}
-          justifyContent={'center'}
-          alignContent={'center'}
-          // spacing={2}
+          alignItems={'flex-start'}
+          justifyContent={'flex-start'}
+          alignContent={'flex-start'}
           style={{
-            top: 0,
-            left: 0,
             display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            alignContent: 'center',
-            border: '1px dashed #B6B0B0',
+            justifyContent: 'flex-start',
+            alignItems: 'flex-start',
+            alignContent: 'flex-start',
+            // border: '1px dashed #B6B0B0',
             borderRadius: '1rem',
             height: '97%',
             width: '97%',
             margin: 0,
             flexGrow: 3,
-            flexShrink: 0,
-            padding: 10
+            flexShrink: 10,
+            padding: 15
           }}
         >
           {/* application center staged content */}
           <Grid
+            ref={controlContainerRef}
             className={'content-container'}
             id={'main-content'}
             item
-            spacing={2}
             xs={12}
             sm={12}
             sx={{
@@ -158,13 +171,15 @@ export function App ({
               width: '97%',
               height: '97%',
               // height: '85%',
-              border: '1px dashed #DD1616',
+              // border: '1px dashed #DD1616',
               borderRadius: '1rem',
               margin: 'auto',
-              padding: 1,
+              // padding: 5,
               justifyContent: 'center',
               alignItems: 'center',
-              alignContent: 'center'
+              alignContent: 'center',
+              flexGrow: 3,
+              flexShrink: 10
             }}
           >
             <MemoryRouter
@@ -208,6 +223,7 @@ export function App ({
                             state={state}
                             setState={setState}
                             theme={theme}
+                            visible={true}
                           />
                           )
                         : (
@@ -216,13 +232,12 @@ export function App ({
                             id={'landing-component-container'}
                             style={{
                               display: 'flex',
-                              border: '1px dashed pink',
+                              border: '5px solid pink',
                               borderRadius: 15,
-                              width: '100%'
-                              // height: '100%'
-                              // margin: 'auto',
-                              // width: 'inherit',
-                              // flexGrow: 3
+                              width: '100%',
+                              height: '100%',
+                              flexGrow: 10,
+                              flexShrink: 10
                             }}
                           >
                             <Landing

@@ -404,7 +404,7 @@ Star.propTypes = {
 function DysonSphere ({
   position = [0, 0, 0],
   radius = 1,
-  visible = false,
+  visible = true,
   ...props
 }) {
   const groupRef = React.useRef(null)
@@ -1172,7 +1172,7 @@ export function Splash ({
             setState={setState}
             count={20}
           /> */}
-          <Billboard
+          {/* <Billboard
               follow={false}
               lockX={false}
               lockY={false}
@@ -1180,7 +1180,7 @@ export function Splash ({
           >
               <Words/>
 
-          </Billboard>
+          </Billboard> */}
         </Float>
         {/* <Proton
             position={[45, 145, 45]}

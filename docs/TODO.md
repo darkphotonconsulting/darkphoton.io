@@ -1,3 +1,3 @@
 # TODOS
 
-- define data model
+- ~~define data model~~
