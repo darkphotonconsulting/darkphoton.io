@@ -20,8 +20,6 @@ import {
 } from './config/Configuration.js'
 
 import {
-  // Breadcrumbs,
-  // Link,
   createTheme,
   responsiveFontSizes,
   ThemeProvider,
@@ -109,7 +107,6 @@ export function App ({
   return (
     <ThemeProvider
       theme={theme}
-      // className={'theme-container'}
     >
       <CssBaseline />
       {/*
@@ -124,7 +121,7 @@ export function App ({
           display: 'flex',
           padding: 15,
           backgroundImage: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
-          backgroundSize: 'cover',
+          // backgroundSize: 'cover',
           boxShadow: 'inset 0 0 0 2000px rgba(0, 0, 0, 0.5)',
           alignItems: 'center',
           alignContent: 'center',
