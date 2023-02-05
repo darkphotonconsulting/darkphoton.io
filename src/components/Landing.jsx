@@ -2,6 +2,7 @@ import './Landing.css'
 import './nasalization_regular.otf'
 import React from 'react'
 import PropTypes from 'prop-types'
+// import { randomUUID } from 'crypto'
 import {
   // eslint-disable-next-line no-unused-vars
   createTheme,
@@ -36,6 +37,7 @@ import {
   MemoryRouter,
   withRouter
 } from 'react-router-dom'
+// import { width } from '@mui/system'
 
 const localTheme = createTheme({
   typography: {
@@ -320,7 +322,8 @@ function Section ({
             <Box
               sx={{
                 display: 'flex',
-                paddingLeft: '1rem'
+                paddingLeft: '1rem',
+                backgroundColor: 'primary.main'
               }}
             >
               <Typography
@@ -433,8 +436,8 @@ function Section ({
         >
           <Box
             sx={{
-              display: 'flex',
-              width: '50%'
+              // display: 'flex'
+              width: '33.333%'
             }}
           >
             <Typography
@@ -453,18 +456,26 @@ function Section ({
           </Box>
           <Box
             sx={{
-              display: 'flex'
+              // display: 'flex',
+              width: '33.333%'
               // height: '100%'
+              // border: '1px solid grey'
             }}
           >
             <Divider
+              component={'div'}
               orientation={'vertical'}
-              sx={{
+              flexItem={true}
+              style={{
+                color: 'grey',
+                width: '100%',
+                height: '100%'
               }}
             />
           </Box>
           <Box
             sx={{
+              width: '33.333%',
               flexDirection: 'row',
               alignContent: 'center',
               alignItems: 'center',
@@ -477,7 +488,6 @@ function Section ({
             <List
                 dense={false}
                 sx={{
-                  // display: 'flex'
                 }}
               >
               {
@@ -485,14 +495,15 @@ function Section ({
                   return (
                     <ListItem
                       component={'div'}
-                      disablePadding
-                      disableGutters
-                      key={index}
+                      disablePadding={true}
+                      disableGutters={true}
+                      key={
+                        `${index}-${feature.name.toLowerCase().replaceAll(' ', '')}`
+                      }
                     >
                       <ListItemIcon
                         sx={{
                           color: 'grey'
-                          // backgroundImage: 'linear-gradient(45deg, #6B7CFE 30%, #EE53FF 90%)'
                         }}
                       >
                         <FontAwesomeIcon icon={faDotCircle} />
@@ -504,9 +515,9 @@ function Section ({
                           fontSize: {
                             xs: '.15rem',
                             sm: '.25rem',
-                            md: '.55rem',
-                            lg: '.75rem',
-                            xl: '.85rem'
+                            md: '.35rem',
+                            lg: '.45rem',
+                            xl: '.55rem'
                           }
                         }}
                         sx={{
@@ -536,6 +547,7 @@ Section.propTypes = {
 }
 
 function Sections ({ data = landingSections, ...props }) {
+  const sorted = data.sort((a, b) => a.precedence - b.precedence)
   return (
     <Stack
       direction='column'
@@ -548,34 +560,32 @@ function Sections ({ data = landingSections, ...props }) {
         justifyContent: 'center',
         alignItems: 'center',
         alignContent: 'center',
-        // width: '90%',
-        // height: '100%',
         flexGrow: data.length,
         flexShrink: data.length
       }}
     >
-      {data.map((section, index) => {
-        return (
-          <Box
-            style={{
-              display: 'flex',
-              flexGrow: data.length - index,
-              flexShrink: data.length - index
-            }}
-            key={`landing-parallax-section-${index}`}
-          >
-            <Section
-              key={`landing-section-${index}`}
-              title={section.data.name}
-              description={section.data.description.join('. ')}
-              // color={section.color}
-              roadmap={section.data.roadmap}
-              tiers={section.data.tiers}
-            />
-            <Divider />
-          </Box>
-        )
-      })}
+      {sorted
+        .map((section, index) => {
+          return (
+            <Box
+              style={{
+                display: 'flex',
+                flexGrow: data.length - index,
+                flexShrink: data.length - index
+              }}
+              key={`landing-parallax-section-${index}`}
+            >
+              <Section
+                key={`landing-section-${index}`}
+                title={section.data.name}
+                description={section.data.description.join('. ')}
+                roadmap={section.data.roadmap}
+                tiers={section.data.tiers}
+              />
+              <Divider />
+            </Box>
+          )
+        })}
     </Stack>
   )
 }
