@@ -4,15 +4,32 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import {
   // eslint-disable-next-line no-unused-vars
+  createTheme,
+  ThemeProvider,
   Paper,
   Grid,
   Stack,
   Box,
   Typography,
-  Divider
+  Divider,
+  IconButton,
+  Menu,
+  MenuItem,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon
 } from '@mui/material'
 import { useSpring, animated } from 'react-spring'
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {
+  faRoad,
+  faMapLocationDot,
+  faBars,
+  // faCircle,
+  faDotCircle
+} from '@fortawesome/pro-duotone-svg-icons'
 import {
   useLocation,
   useHistory,
@@ -20,24 +37,92 @@ import {
   withRouter
 } from 'react-router-dom'
 
+const localTheme = createTheme({
+  typography: {
+    fontFamily: 'Nasalization, sans-serif'
+  }
+})
 // eslint-disable-next-line no-unused-vars
 const landingSections = [
   {
-    title: 'Solutions Architecture',
+    title: 'Professional Services',
     description: 'From the ground up, we can help you build your solution.',
-    data: {},
+    roadmap: false,
+    tiers: [
+      {
+        name: 'standard',
+        description: 'Standard Tier',
+        price: 0,
+        features: [
+          {
+            name: 'Feature 1',
+            description: 'Feature 1 description'
+          },
+          {
+            name: 'Feature 2',
+            description: 'Feature 2 description'
+          }
+        ]
+      }
+    ],
+    color: 'linear-gradient(45deg, #6B7CFE 30%, #EE53FF 90%)'
+  },
+  {
+    title: 'Infrastructure Solutions',
+    description: 'From the ground up, we can help you build your solution.',
+    roadmap: false,
+    tiers: [
+      {
+        name: 'standard',
+        description: 'Standard Tier',
+        price: 0,
+        features: [
+          {
+            name: 'Feature 1',
+            description: 'Feature 1 description'
+          },
+          {
+            name: 'Feature 2',
+            description: 'Feature 2 description'
+          }
+        ]
+      }
+    ],
+    color: 'linear-gradient(45deg, #6B7CFE 30%, #EE53FF 90%)'
+  },
+  {
+    title: 'Application Modernization',
+    description: 'From the ground up, we can help you build your solution.',
+    roadmap: true,
+    tiers: [
+      {
+        name: 'standard',
+        description: 'Standard Tier',
+        price: 0,
+        features: []
+      }
+    ],
     color: 'linear-gradient(45deg, #6B7CFE 30%, #EE53FF 90%)'
   },
   {
     title: 'Data Science',
-    description: 'Doing the data things',
-    data: {},
+    description: 'Doing the data thing, blah blah blah blah',
+    roadmap: true,
+    tiers: [
+      {
+        name: 'standard',
+        description: 'Standard Tier',
+        price: 0,
+        features: []
+      }
+    ],
     color: 'linear-gradient(45deg, #6B7CFE 30%, #EE53FF 90%)'
   }
 ]
 function Title ({
   theme = {},
-  text = 'Dark Photon IT Consultants, LLC',
+  text = 'Dark Photon IT',
+  color = 'white',
   ...props
 }) {
   const animations = useSpring({
@@ -63,7 +148,10 @@ function Title ({
       id={'landing-title-container'}
       className={'landing-title-container'}
       style={{
-        display: 'flex'
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        alignContent: 'center'
       }}
     >
       <animated.div
@@ -71,7 +159,22 @@ function Title ({
         className={'landing-title'}
         id={'landing-title'}
       >
-       <span>{text}</span>
+        <Typography
+          sx={{
+            fontWeight: 'bold',
+            color: `${color}`,
+            fontSize: {
+              xs: '.5rem',
+              sm: '.75rem',
+              md: '1rem',
+              lg: '2rem',
+              xl: '3rem'
+            }
+          }}
+        >
+          {text}
+        </Typography>
+        {/* <span>{text}</span> */}
       </animated.div>
     </Box>
   )
@@ -79,12 +182,14 @@ function Title ({
 
 Title.propTypes = {
   theme: PropTypes.object,
-  text: PropTypes.string
+  text: PropTypes.string,
+  color: PropTypes.string
 }
 
 function Subtitle ({
   theme = {},
   text = 'Solutions for a type 1 civilization',
+  color = 'white',
   ...props
 }) {
   const animations = useSpring({
@@ -126,7 +231,22 @@ function Subtitle ({
         className={'landing-subtitle'}
         id={'landing-subtitle'}
       >
-        <span className={'landing-subtitle'}>{text}</span>
+        <Typography
+          className={'landing-subtitle'}
+          sx={{
+            fontSize: {
+              xs: '.5rem',
+              sm: '.75rem',
+              md: '1rem',
+              lg: '2rem',
+              xl: '3rem'
+            },
+            fontWeight: 'bold',
+            color: `${color}`
+          }}
+        >
+          {text}
+        </Typography>
       </animated.div>
     </Box>
   )
@@ -134,63 +254,275 @@ function Subtitle ({
 
 Subtitle.propTypes = {
   theme: PropTypes.object,
-  text: PropTypes.string
+  text: PropTypes.string,
+  color: PropTypes.string
 }
 
 function Section ({
   title = 'Section',
   // theme = {},
   description = 'Section description',
-  color = 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+  color = 'linear-gradient(45deg, #6DFE6B 30%, #FF8E53 90%)',
+  roadmap = false,
+  tiers = [],
   ...props
 }) {
+  // eslint-disable-next-line no-unused-vars
+  const [tier, setTier] = React.useState('Basic')
+  const [tierMenuActive, setTierMenuActive] = React.useState(false)
+  const tierMenuRef = React.useRef(null)
+
+  /* govern tier selection */
+  const handleTier = (event) => {
+    console.log(event.currentTarget)
+    setTier(event.currentTarget)
+  }
+
+  const handleTierMenu = (event) => {
+    console.log(event)
+    setTierMenuActive(!tierMenuActive)
+  }
+
   return (
     <Paper
+      elevation={3}
       sx={{
-        display: 'flex'
+        // border: '5px solid blue',
+        display: 'flex',
+        alignContent: 'center',
+        alignItems: 'center',
+        textAlign: 'center',
+        justifyContent: 'center'
       }}
     >
-      <Box
+      <Stack
+        direction='column'
         sx={{
           display: 'flex',
-          alignContent: 'center',
-          alignItems: 'center',
-          textAlign: 'center',
-          justifyContent: 'center',
-          width: '75%',
           flexGrow: landingSections.length,
           flexShrink: landingSections.length
         }}
       >
-        <Typography
-          variant='h3'
+        {/* title */}
+          <Stack
+            direction='row'
+            spacing={6}
+            sx={{
+              display: 'flex',
+              alignContent: 'flex-start',
+              alignItems: 'flex-start',
+              textAlign: 'center',
+              justifyContent: 'flex-start',
+              flexGrow: landingSections.length,
+              flexShrink: landingSections.length
+            }}
+          >
+            <Box
+              sx={{
+                display: 'flex',
+                paddingLeft: '1rem'
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: {
+                    xs: '.25rem',
+                    sm: '.35rem',
+                    md: '.45rem',
+                    lg: '.95rem',
+                    xl: '1rem'
+                  }
+                }}
+              >
+                {title}{' '}
+                {roadmap
+                  ? (
+                  <IconButton>
+                    <FontAwesomeIcon icon={faRoad} />
+                  </IconButton>
+                    )
+                  : (
+                  <IconButton>
+                    <FontAwesomeIcon icon={faMapLocationDot} />
+                  </IconButton>
+                    )}
+              </Typography>
+            </Box>
+            <Box>
+              <IconButton
+                onClick={(event) => {
+                  handleTierMenu(event)
+                }}
+                onChange={(event) => { handleTier(event) }}
+                ref={tierMenuRef}
+              >
+                <FontAwesomeIcon icon={faBars} />
+                <Typography
+                  // variant={'body2'}
+                  sx={{
+                    fontSize: {
+                      xs: '.25rem',
+                      sm: '.35rem',
+                      md: '.45rem',
+                      lg: '.95rem',
+                      xl: '1rem'
+                    }
+                  }}
+                >{tier}
+                </Typography>
+              </IconButton>
+              <Menu
+                id={`${title.toLowerCase().replaceAll(' ', '')}-tier-menu`}
+                aria-labelledby={`${title.toLowerCase().replaceAll(' ', '')}-tier-menu`}
+                open={tierMenuActive}
+                anchorEl={tierMenuRef.current}
+                onClose={(event) => {
+                  // handleTier(event)
+                  handleTierMenu(event)
+                }}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'left'
+                }}
+                transformOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'left'
+                }}
+              >
+               {
+                tiers.map((tier, index) => {
+                  return (
+                    <MenuItem
+                      key={index}
+                    >
+                      {tier.name}
+                    </MenuItem>
+                  )
+                })
+               }
+              </Menu>
+            </Box>
+          </Stack>
+        {/* </Box> */}
+        {/* top division */}
+        <Box
           sx={{
-            typography: {
-              xs: 'h6',
-              sm: 'h6',
-              md: 'h6',
-              lg: 'h2',
-              xl: 'h2'
-            }
+            display: 'flex',
+            width: '100%'
           }}
         >
-          {title}
-        </Typography>
-        <Typography
+          <Divider
+            sx={{
+              width: '100%',
+              color: 'black'
+            }}
+          />
+        </Box>
+        {/* description */}
+        <Stack
+          direction={'row'}
           sx={{
-            typography: {
-              xs: 'body2',
-              sm: 'body2',
-              md: 'body2',
-              lg: 'body1',
-              xl: 'body1'
-            }
+            display: 'flex',
+            alignContent: 'center',
+            alignItems: 'center',
+            textAlign: 'center',
+            justifyContent: 'center',
+            flexGrow: landingSections.length,
+            flexShrink: landingSections.length
           }}
-          variant='subtitle'
         >
-          {description}
-        </Typography>
-      </Box>
+          <Box
+            sx={{
+              display: 'flex',
+              width: '50%'
+            }}
+          >
+            <Typography
+              sx={{
+                fontSize: {
+                  xs: '.15rem',
+                  sm: '.25rem',
+                  md: '.55rem',
+                  lg: '.75rem',
+                  xl: '.85rem'
+                }
+              }}
+            >
+              {description}
+            </Typography>
+          </Box>
+          <Box
+            sx={{
+              display: 'flex'
+              // height: '100%'
+            }}
+          >
+            <Divider
+              orientation={'vertical'}
+              sx={{
+              }}
+            />
+          </Box>
+          <Box
+            sx={{
+              flexDirection: 'row',
+              alignContent: 'center',
+              alignItems: 'center',
+              textAlign: 'center',
+              justifyContent: 'center',
+              flexGrow: landingSections.length,
+              flexShrink: landingSections.length
+            }}
+          >
+            <List
+                dense={false}
+                sx={{
+                  // display: 'flex'
+                }}
+              >
+              {
+                tiers.find(t => t.name === tier).features.map((feature, index) => {
+                  return (
+                    <ListItem
+                      component={'div'}
+                      disablePadding
+                      disableGutters
+                      key={index}
+                    >
+                      <ListItemIcon
+                        sx={{
+                          color: 'grey'
+                          // backgroundImage: 'linear-gradient(45deg, #6B7CFE 30%, #EE53FF 90%)'
+                        }}
+                      >
+                        <FontAwesomeIcon icon={faDotCircle} />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={feature.name}
+                        primaryTypographyProps={{
+                          color: 'primary.main',
+                          fontSize: {
+                            xs: '.15rem',
+                            sm: '.25rem',
+                            md: '.55rem',
+                            lg: '.75rem',
+                            xl: '.85rem'
+                          }
+                        }}
+                        sx={{
+                          my: 0
+                        }}
+                      />
+                    </ListItem>
+                  )
+                })
+              }
+            </List>
+          </Box>
+
+        </Stack>
+
+      </Stack>
     </Paper>
   )
 }
@@ -198,13 +530,12 @@ function Section ({
 Section.propTypes = {
   title: PropTypes.string,
   description: PropTypes.string,
+  roadmap: PropTypes.bool,
+  tiers: PropTypes.array,
   color: PropTypes.string
 }
 
-function Sections ({
-  data = landingSections,
-  ...props
-}) {
+function Sections ({ data = landingSections, ...props }) {
   return (
     <Stack
       direction='column'
@@ -214,43 +545,37 @@ function Sections ({
       alignContent='center'
       style={{
         display: 'flex',
-        width: '90%',
-        height: '100%',
-        border: '1px solid black',
-        padding: 5,
-        flexGrow: 10,
-        flexShrink: 10
+        justifyContent: 'center',
+        alignItems: 'center',
+        alignContent: 'center',
+        // width: '90%',
+        // height: '100%',
+        flexGrow: data.length,
+        flexShrink: data.length
       }}
     >
-      {
-        data.map((section, index) => {
-          return (
-            <Box
-              style={{
-                display: 'flex',
-                backgroundImage: section.color,
-                justifyContent: 'center',
-                alignItems: 'center',
-                alignContent: 'center',
-                width: 'inherit',
-                flexGrow: data.length - index,
-                flexShrink: data.length - index,
-                border: '5px solid black'
-              }}
-              key={`landing-parallax-section-${index}`}
-            >
-              <Section
-                key={`landing-section-${index}`}
-                title={section.title}
-                description={section.description}
-                color={section.color}
-              />
-              <Divider/>
-            </Box>
-          )
-        })
-      }
-
+      {data.map((section, index) => {
+        return (
+          <Box
+            style={{
+              display: 'flex',
+              flexGrow: data.length - index,
+              flexShrink: data.length - index
+            }}
+            key={`landing-parallax-section-${index}`}
+          >
+            <Section
+              key={`landing-section-${index}`}
+              title={section.data.name}
+              description={section.data.description.join('. ')}
+              // color={section.color}
+              roadmap={section.data.roadmap}
+              tiers={section.data.tiers}
+            />
+            <Divider />
+          </Box>
+        )
+      })}
     </Stack>
   )
 }
@@ -259,33 +584,56 @@ Sections.propTypes = {
   data: PropTypes.array
 }
 
-function Landing ({
-  ...props
-}) {
+function Landing ({ theme = {}, ...props }) {
+  const [services, setServices] = React.useState([])
+  React.useEffect(() => {
+    const fetchServices = async () => {
+      fetch('http://localhost:3001/services', {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json'
+        }
+      })
+        .then((res) => {
+          const json = res.json()
+          return json
+        })
+        .then((json) => {
+          if (services.length === 0) {
+            setServices((services) => [...json])
+          }
+        })
+    }
+    fetchServices()
+  }, [services])
   // eslint-disable-next-line no-unused-vars
   const location = useLocation()
   // eslint-disable-next-line no-unused-vars
   const history = useHistory()
 
   return (
-    <MemoryRouter
-      initialEntries={['/']}
-      initialIndex={0}
-      id={'landing-router'}
-      className={'memory-router'}
-    >
+    <ThemeProvider theme={{ ...theme, ...localTheme }}>
+      <MemoryRouter
+        initialEntries={['/']}
+        initialIndex={0}
+        id={'landing-router'}
+        className={'memory-router'}
+      >
         <Grid
           container
           direction={'column'}
           id={'landing-grid'}
           className={'landing-grid'}
           alignContent={'start'}
-          // justifyContent={'center'}
-          // alignItems={'center'}
           style={{
             borderRadius: 15,
-            width: '100%',
-            height: '100%'
+            // border: '15px solid #123',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            alignContent: 'center'
+            // width: '100%',
+            // height: '100%'
           }}
         >
           <Grid
@@ -299,6 +647,7 @@ function Landing ({
             <Title
               id={'landing-title-component'}
               className={'landing-title-component'}
+              color={'#12B70FAB'}
             />
           </Grid>
           <Grid
@@ -312,6 +661,7 @@ function Landing ({
             <Subtitle
               id={'landing-subtitle-component'}
               className={'landing-subtitle-component'}
+              color={'#FFFFFF'}
             />
           </Grid>
           <Grid
@@ -322,13 +672,16 @@ function Landing ({
             justifyContent={'center'}
             alignItems={'center'}
           >
-            <Sections
-              data={landingSections}
-            />
+            <Sections data={services} />
           </Grid>
         </Grid>
-    </MemoryRouter>
+      </MemoryRouter>
+    </ThemeProvider>
   )
+}
+
+Landing.propTypes = {
+  theme: PropTypes.object
 }
 
 export default animated(withRouter(Landing))
