@@ -11,7 +11,8 @@ import {
 
 import {
   Grid,
-  Box
+  Box,
+  Typography
 } from '@mui/material'
 
 function About ({
@@ -22,21 +23,29 @@ function About ({
   sk = 'profile',
   ...props
 }) {
+  const [about, setAbout] = React.useState({})
   React.useEffect(() => {
-    const fetchData = async () => {
-      const node = new Node({
-        pk,
-        sk
-      })
-      const data = await node.query({
-        pk,
-        sk
-      })
-      console.log(data)
-      console.log('env: ', process.env)
+    const fetchServices = async () => {
+      fetch(
+        'http://localhost:3001/about',
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json'
+          }
+        }
+      )
+        .then((res) => {
+          const json = res.json()
+          return json
+        })
+        .then((json) => {
+          setAbout(json)
+        })
     }
-    fetchData()
-  }, [state])
+    fetchServices()
+  }, [about])
+
   // eslint-disable-next-line no-unused-vars
   const location = useLocation()
   // eslint-disable-next-line no-unused-vars
@@ -51,7 +60,7 @@ function About ({
             item
           >
             <Box>
-              <h1>Aboutl</h1>
+              <Typography>{about.name}</Typography>
             </Box>
           </Grid>
         </Grid>
