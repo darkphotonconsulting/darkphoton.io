@@ -28,7 +28,6 @@ import {
   faRoad,
   faMapLocationDot,
   faBars,
-  // faCircle,
   faDotCircle
 } from '@fortawesome/pro-duotone-svg-icons'
 import {
@@ -37,7 +36,6 @@ import {
   MemoryRouter,
   withRouter
 } from 'react-router-dom'
-// import { width } from '@mui/system'
 
 const localTheme = createTheme({
   typography: {
@@ -262,7 +260,6 @@ Subtitle.propTypes = {
 
 function Section ({
   title = 'Section',
-  // theme = {},
   description = 'Section description',
   color = 'linear-gradient(45deg, #6DFE6B 30%, #FF8E53 90%)',
   roadmap = false,
@@ -275,13 +272,12 @@ function Section ({
   const tierMenuRef = React.useRef(null)
 
   /* govern tier selection */
-  const handleTier = (event) => {
-    console.log(event.currentTarget)
-    setTier(event.currentTarget)
+  const handleTier = (event, index) => {
+    console.log('handling-tier', { event, index })
+    setTier(tiers[index].name)
   }
 
   const handleTierMenu = (event) => {
-    console.log(event)
     setTierMenuActive(!tierMenuActive)
   }
 
@@ -289,43 +285,75 @@ function Section ({
     <Paper
       elevation={3}
       sx={{
-        // border: '5px solid blue',
         display: 'flex',
         alignContent: 'center',
         alignItems: 'center',
-        textAlign: 'center',
         justifyContent: 'center'
       }}
     >
+      {/* header section */}
       <Stack
         direction='column'
+        // spacing={1}
         sx={{
-          display: 'flex',
           flexGrow: landingSections.length,
           flexShrink: landingSections.length
         }}
       >
-        {/* title */}
-          <Stack
-            direction='row'
-            spacing={6}
+        {/* title & toolbar */}
+        <Stack
+          direction='row'
+          spacing={1}
+          sx={{
+            // border: '1px solid black',
+            flex: '1 1 auto',
+            alignContent: 'flex-start',
+            alignItems: 'flex-start',
+            justifyContent: 'flex-start'
+          }}
+        >
+          <Box
             sx={{
-              display: 'flex',
-              alignContent: 'flex-start',
-              alignItems: 'flex-start',
+              width: '33.33%',
+              height: 'inherit',
+              flex: '1 1 auto',
+              backgroundColor: 'primary.main',
               textAlign: 'center',
-              justifyContent: 'flex-start',
-              flexGrow: landingSections.length,
-              flexShrink: landingSections.length
+              verticalAlign: 'middle'
             }}
           >
-            <Box
+            <Typography
+              component={'div'}
               sx={{
-                display: 'flex',
-                paddingLeft: '1rem',
-                backgroundColor: 'primary.main'
+                fontSize: {
+                  xs: '.35rem',
+                  sm: '.55rem',
+                  md: '.75rem',
+                  lg: '.95rem',
+                  xl: '1.15rem'
+                }
               }}
+            >{title}
+            </Typography>
+          </Box>
+          <Box
+            sx={{
+              width: '33.33%',
+              backgroundColor: 'primary.main'
+            }}
+          >
+            <IconButton
+              id={`${title.toLowerCase().replaceAll(' ', '')}-tier-menu-button`}
+              aria-controls={tierMenuActive ? `${title.toLowerCase().replaceAll(' ', '')}-tier-menu` : undefined}
+              aria-haspopup={'true'}
+              aria-expanded={tierMenuActive ? 'true' : undefined}
+              onClick={(event) => {
+                event.preventDefault()
+                handleTierMenu(event)
+              }}
+              ref={tierMenuRef}
             >
+              <FontAwesomeIcon icon={faBars} />
               <Typography
                 sx={{
                   fontSize: {
@@ -336,78 +364,68 @@ function Section ({
                     xl: '1rem'
                   }
                 }}
-              >
-                {title}{' '}
-                {roadmap
-                  ? (
-                  <IconButton>
-                    <FontAwesomeIcon icon={faRoad} />
-                  </IconButton>
-                    )
-                  : (
-                  <IconButton>
-                    <FontAwesomeIcon icon={faMapLocationDot} />
-                  </IconButton>
-                    )}
+              >{tier}
               </Typography>
-            </Box>
-            <Box>
-              <IconButton
-                onClick={(event) => {
-                  handleTierMenu(event)
-                }}
-                onChange={(event) => { handleTier(event) }}
-                ref={tierMenuRef}
-              >
-                <FontAwesomeIcon icon={faBars} />
-                <Typography
-                  // variant={'body2'}
-                  sx={{
-                    fontSize: {
-                      xs: '.25rem',
-                      sm: '.35rem',
-                      md: '.45rem',
-                      lg: '.95rem',
-                      xl: '1rem'
-                    }
-                  }}
-                >{tier}
-                </Typography>
+            </IconButton>
+            <Menu
+              id={`${title.toLowerCase().replaceAll(' ', '')}-tier-menu`}
+              aria-labelledby={`${title.toLowerCase().replaceAll(' ', '')}-tier-menu`}
+              open={tierMenuActive}
+              anchorEl={tierMenuRef.current}
+              onClose={(event) => {
+                event.preventDefault()
+                handleTierMenu(event)
+              }}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left'
+              }}
+              transformOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left'
+              }}
+              MenuListProps={{
+                'aria-labelledby': `${title.toLowerCase().replaceAll(' ', '')}-tier-menu`
+              }}
+            >
+              {
+              tiers.map((tier, index) => {
+                return (
+                  <MenuItem
+                    key={`${title.toLowerCase().replaceAll(' ', '')}-tier-menu-item-${index}`}
+                    onClick={(event) => {
+                      event.preventDefault()
+                      handleTier(event, index)
+                      handleTierMenu(event)
+                    }}
+                  >
+                    {tier.name}
+                  </MenuItem>
+                )
+              })
+              }
+            </Menu>
+          </Box>
+          <Box
+            sx={{
+              width: '33.33%'
+            }}
+          >
+            {roadmap
+              ? (
+              <IconButton>
+                <FontAwesomeIcon icon={faRoad} shake />
               </IconButton>
-              <Menu
-                id={`${title.toLowerCase().replaceAll(' ', '')}-tier-menu`}
-                aria-labelledby={`${title.toLowerCase().replaceAll(' ', '')}-tier-menu`}
-                open={tierMenuActive}
-                anchorEl={tierMenuRef.current}
-                onClose={(event) => {
-                  // handleTier(event)
-                  handleTierMenu(event)
-                }}
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'left'
-                }}
-                transformOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'left'
-                }}
-              >
-               {
-                tiers.map((tier, index) => {
-                  return (
-                    <MenuItem
-                      key={index}
-                    >
-                      {tier.name}
-                    </MenuItem>
-                  )
-                })
-               }
-              </Menu>
-            </Box>
-          </Stack>
-        {/* </Box> */}
-        {/* top division */}
+                )
+              : (
+              <IconButton>
+                <FontAwesomeIcon icon={faMapLocationDot} shake />
+              </IconButton>
+                )
+            }
+          </Box>
+        </Stack>
+        {/* horizontal division */}
         <Box
           sx={{
             display: 'flex',
@@ -417,13 +435,14 @@ function Section ({
           <Divider
             sx={{
               width: '100%',
-              color: 'black'
+              color: 'info.main'
             }}
           />
         </Box>
-        {/* description */}
+        {/* description & features */}
         <Stack
           direction={'row'}
+          spacing={1}
           sx={{
             display: 'flex',
             alignContent: 'center',
@@ -434,14 +453,16 @@ function Section ({
             flexShrink: landingSections.length
           }}
         >
+          {/* service description */}
           <Box
             sx={{
-              // display: 'flex'
-              width: '33.333%'
+              // border: '1px solid black',
+              width: '60%'
             }}
           >
             <Typography
               sx={{
+                // transform: 'translateY(-50%)',
                 fontSize: {
                   xs: '.15rem',
                   sm: '.25rem',
@@ -454,39 +475,29 @@ function Section ({
               {description}
             </Typography>
           </Box>
-          <Box
-            sx={{
-              // display: 'flex',
-              width: '33.333%'
-              // height: '100%'
-              // border: '1px solid grey'
-            }}
-          >
-            <Divider
-              component={'div'}
+
+          {/* vertical divider */}
+          <Divider
               orientation={'vertical'}
               flexItem={true}
-              style={{
-                color: 'grey',
-                width: '100%',
-                height: '100%'
-              }}
-            />
-          </Box>
+          />
+
+          {/* feature list */}
           <Box
             sx={{
-              width: '33.333%',
               flexDirection: 'row',
-              alignContent: 'center',
-              alignItems: 'center',
-              textAlign: 'center',
-              justifyContent: 'center',
+              alignContent: 'flex-start',
+              alignItems: 'flex-start',
+              textAlign: 'flex-start',
+              justifyContent: 'flex-start',
               flexGrow: landingSections.length,
               flexShrink: landingSections.length
             }}
           >
             <List
-                dense={false}
+                dense={true}
+                disablePadding={true}
+                disableGutters={true}
                 sx={{
                 }}
               >
@@ -494,29 +505,39 @@ function Section ({
                 tiers.find(t => t.name === tier).features.map((feature, index) => {
                   return (
                     <ListItem
+                      dense={true}
                       component={'div'}
-                      disablePadding={true}
-                      disableGutters={true}
+                      alignItems={'center'}
+                      divider={false}
                       key={
                         `${index}-${feature.name.toLowerCase().replaceAll(' ', '')}`
                       }
                     >
                       <ListItemIcon
+                        alignItems={'center'}
                         sx={{
-                          color: 'grey'
+                          padding: 1,
+                          color: 'info.main',
+                          minWidth: {
+                            xs: 'auto',
+                            sm: 'auto',
+                            md: 'auto',
+                            lg: 'auto',
+                            xl: 'auto'
+                          }
                         }}
                       >
-                        <FontAwesomeIcon icon={faDotCircle} />
+                        <FontAwesomeIcon icon={faDotCircle} shake/>
                       </ListItemIcon>
                       <ListItemText
                         primary={feature.name}
                         primaryTypographyProps={{
                           color: 'primary.main',
                           fontSize: {
-                            xs: '.15rem',
-                            sm: '.25rem',
-                            md: '.35rem',
-                            lg: '.45rem',
+                            xs: '.25rem',
+                            sm: '.35rem',
+                            md: '.45rem',
+                            lg: '.55rem',
                             xl: '.55rem'
                           }
                         }}
@@ -555,11 +576,15 @@ function Sections ({ data = landingSections, ...props }) {
       alignItems='center'
       justifyContent='center'
       alignContent='center'
-      style={{
+      sx={{
         display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        alignContent: 'center',
+        width: {
+          xs: '10%',
+          sm: '20%',
+          md: '30%',
+          lg: '40%',
+          xl: '50%'
+        },
         flexGrow: data.length,
         flexShrink: data.length
       }}
@@ -567,23 +592,13 @@ function Sections ({ data = landingSections, ...props }) {
       {sorted
         .map((section, index) => {
           return (
-            <Box
-              style={{
-                display: 'flex',
-                flexGrow: data.length - index,
-                flexShrink: data.length - index
-              }}
-              key={`landing-parallax-section-${index}`}
-            >
-              <Section
-                key={`landing-section-${index}`}
-                title={section.data.name}
-                description={section.data.description.join('. ')}
-                roadmap={section.data.roadmap}
-                tiers={section.data.tiers}
-              />
-              <Divider />
-            </Box>
+            <Section
+            key={`landing-section-${index}`}
+            title={section.data.name}
+            description={section.data.description.join('. ')}
+            roadmap={section.data.roadmap}
+            tiers={section.data.tiers}
+            />
           )
         })}
     </Stack>
@@ -620,6 +635,10 @@ function Landing ({ theme = {}, ...props }) {
   const location = useLocation()
   // eslint-disable-next-line no-unused-vars
   const history = useHistory()
+  console.log('theme', {
+    ...theme,
+    ...localTheme
+  })
 
   return (
     <ThemeProvider theme={{ ...theme, ...localTheme }}>
@@ -634,16 +653,21 @@ function Landing ({ theme = {}, ...props }) {
           direction={'column'}
           id={'landing-grid'}
           className={'landing-grid'}
-          alignContent={'start'}
+          rowSpacing={{
+            xs: 1,
+            sm: 2,
+            md: 3
+          }}
+          columnSpacing={{
+            xs: 1,
+            sm: 2,
+            md: 3
+          }}
           style={{
-            borderRadius: 15,
-            // border: '15px solid #123',
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
             alignContent: 'center'
-            // width: '100%',
-            // height: '100%'
           }}
         >
           <Grid
@@ -653,11 +677,15 @@ function Landing ({ theme = {}, ...props }) {
             alignContent={'center'}
             justifyContent={'center'}
             alignItems={'center'}
+            sx={{
+              top: 0
+            }}
           >
             <Title
               id={'landing-title-component'}
               className={'landing-title-component'}
               color={'#12B70FAB'}
+              theme={{ ...theme, ...localTheme }}
             />
           </Grid>
           <Grid
@@ -672,17 +700,25 @@ function Landing ({ theme = {}, ...props }) {
               id={'landing-subtitle-component'}
               className={'landing-subtitle-component'}
               color={'#FFFFFF'}
+              theme={{ ...theme, ...localTheme }}
             />
           </Grid>
           <Grid
             item
-            // id={'landing-sections-item'}
+            // xs={'auto'}
+            // sm={'auto'}
+            // md={'auto'}
+            // lg={'auto'}
+            // xl={'auto'}
             className={'landing-sections-item'}
             alignContent={'center'}
-            justifyContent={'center'}
+            justifyContent={'space-between'}
             alignItems={'center'}
           >
-            <Sections data={services} />
+            <Sections
+              data={services}
+              theme={{ ...theme, ...localTheme }}
+            />
           </Grid>
         </Grid>
       </MemoryRouter>

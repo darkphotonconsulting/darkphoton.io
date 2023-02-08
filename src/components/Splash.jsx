@@ -415,7 +415,6 @@ function DysonSphere ({
   const dysonSphere = new THREE.IcosahedronGeometry(radius, 2)
   const outerSphere = new THREE.IcosahedronGeometry(radius, 2)
   const outerSphereLength = outerSphere.attributes.position.array.length
-  // console.log(outerSphereLength)
   const barycentrics = []
   for (let i = 0; i < outerSphereLength / 3; i++) {
     barycentrics.push(
@@ -600,33 +599,6 @@ DysonSphere.propTypes = {
   radius: PropTypes.number,
   visible: PropTypes.bool
 }
-
-// NucleusX.propTypes = {
-//   index: PropTypes.number,
-//   position: PropTypes.array,
-//   radius: PropTypes.number,
-//   sections: PropTypes.number,
-//   distortion: PropTypes.number,
-//   speed: PropTypes.number,
-//   color: PropTypes.array,
-//   emission: PropTypes.number
-// }
-
-// ElectronX.propTypes = {
-//   position: PropTypes.array,
-//   rotation: PropTypes.array,
-//   radius: PropTypes.number,
-//   buffer: PropTypes.number
-// }
-
-// OrbitalX.propTypes = {
-//   position: PropTypes.array,
-//   radius: PropTypes.number,
-//   buffer: PropTypes.number,
-//   color: PropTypes.array,
-//   count: PropTypes.number,
-//   width: PropTypes.number
-// }
 
 function Words ({
   position = [0, 0, 0],

@@ -53,9 +53,7 @@ export function ControlBar ({
 
   React.useLayoutEffect(() => {
     setWidth(containerRef.current.offsetWidth)
-    // console.log('width', width)
     setHeight(containerRef.current.offsetHeight)
-    // console.log('height', height)
   })
 
   React.useEffect(() => {
@@ -179,77 +177,19 @@ export function ControlBar ({
               sx={{
                 display: 'flex',
                 flexGrow: Configuration.settings.appBar.sections.length,
-                flexShrink: Configuration.settings.appBar.sections.length,
-                border: '1px solid red'
+                flexShrink: Configuration.settings.appBar.sections.length
+                // border: '1px solid red'
                 // width: '75%'
                 // padding: 5
               }}
             >
-                  {/* pulling in a speed dial */}
-                    {/* <Box
-                      style={{
-                        width: '100%',
-                        border: '1px dashed blue',
-                        position: 'absolute',
-                        bottom: 5
-                      }}
-                    >
-                      <SpeedDial
-                        ariaLabel='SpeedDial example'
-                        sx={{
-                          fontSize: {
-                            xs: 'small',
-                            sm: 'medium',
-                            md: 'large',
-                            lg: 'large',
-                            xl: 'large'
-                          },
-                          height: {
-                            xs: '12px',
-                            sm: '24px',
-                            md: '42px',
-                            lg: '42px',
-                            xl: '42px'
-                          },
-                          width: {
-                            xs: '12px',
-                            sm: '24px',
-                            md: '42px',
-                            lg: '42px',
-                            xl: '42px'
-                          }
-
-                        }}
-                        icon={
-                          <SpeedDialIcon
-                            openIcon = {
-                              <FontAwesomeIcon icon={<faMoon/>}
-                              />
-                            }
-                          />
-                        }
-                      >
-                        {services.map((service) => {
-                          return (
-                            <SpeedDialAction
-                              key={service.data.name}
-                              icon={<FontAwesomeIcon icon={<faMoon/>}/>}
-                              tooltipTitle={service.data.name}
-                            >
-
-                            </SpeedDialAction>
-                          )
-                        })}
-
-                      </SpeedDial>
-                    </Box> */}
                     <Stack direction='column'>
 
                       <Box
                         style={{
                           // display: 'flex',
-                          width: '100%',
-                          border: '1px dashed blue'
+                          width: '100%'
+                          // border: '1px dashed blue'
                         }}
                       >
                         <IconButton>
@@ -264,8 +204,8 @@ export function ControlBar ({
                           key={`controlbar-section-container-${section.name.toLowerCase()}`}
                           style={{
                             // display: 'flex',
-                            width: '100%',
-                            border: '1px dashed blue'
+                            width: '100%'
+                            // border: '1px dashed blue'
                           }}
                         >
                           <Tooltip
@@ -329,12 +269,6 @@ export function ControlBar ({
                             onMouseOver={(event) => {
                               if (event.target.id) {
                                 setState((state) => {
-                                  // const sectionFromEvent = sections.find((section, index) => {
-                                  //   const sectionMeta = event.target.id.split('-')
-                                  //   const eventId = sectionMeta[sectionMeta.length - 1]
-                                  //   return section.name.toLowerCase() === eventId
-                                  // })
-                                  // console.log('section: ', sectionFromEvent)
                                   return {
                                     ...state,
                                     bar: {
@@ -374,8 +308,8 @@ export function ControlBar ({
                 <Box
                   style={{
                     display: 'flex',
-                    width: '100%',
-                    border: '1px dashed blue'
+                    width: '100%'
+                    // border: '1px dashed blue'
                   }}
                 >
                     <Tooltip
@@ -467,8 +401,8 @@ export function ControlBar ({
                 <Box
                   style={{
                     display: 'flex',
-                    width: '100%',
-                    border: '1px dashed blue'
+                    width: '100%'
+                    // border: '1px dashed blue'
                   }}
                 >
                   <Tooltip
@@ -562,8 +496,8 @@ export function ControlBar ({
                 <Box
                   style={{
                     display: 'flex',
-                    width: '100%',
-                    border: '1px dashed blue'
+                    width: '100%'
+                    // border: '1px dashed blue'
                   }}
                 >
                 <Tooltip
@@ -637,8 +571,6 @@ export function ControlBar ({
                           lg: '42px',
                           xl: '42px'
                         },
-                        // height: 42,
-                        // width: 42,
                         transition: `${theme.transitions.create(['transform', 'cursor', 'backgroundColor'], { duration: theme.transitions.duration.standard })}`,
                         '&:hover': {
                           transform: 'scale(1.3) rotate(360deg)',

@@ -58,8 +58,6 @@ export function App ({
   const history = useHistory()
   // eslint-disable-next-line no-unused-vars
   const location = useLocation()
-  console.log('location: ', location)
-  console.log('history: ', history)
   // eslint-disable-next-line no-unused-vars
   const [state, setState] = React.useState({
     theme: {
@@ -110,7 +108,7 @@ export function App ({
     >
       <CssBaseline />
       {/*
-        Application Root Div/Container
+        root container
       */}
       <div
         ref={rootContainerRef}
@@ -119,9 +117,9 @@ export function App ({
           height: '100vh',
           width: '100vw',
           display: 'flex',
-          padding: 15,
+          padding: 5,
           backgroundImage: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
-          // backgroundSize: 'cover',
+          backgroundSize: 'cover',
           boxShadow: 'inset 0 0 0 2000px rgba(0, 0, 0, 0.5)',
           alignItems: 'center',
           alignContent: 'center',
@@ -129,7 +127,7 @@ export function App ({
         }}
       >
         {/*
-          Application Layout Container
+          layout container
         */}
         <Grid
           ref={layoutContainerRef}
@@ -143,40 +141,34 @@ export function App ({
             justifyContent: 'flex-start',
             alignItems: 'flex-start',
             alignContent: 'flex-start',
-            // border: '1px dashed #B6B0B0',
             borderRadius: '1rem',
             height: '97%',
             width: '97%',
             margin: 0,
             flexGrow: 3,
             flexShrink: 10,
-            padding: 15
+            padding: 5
           }}
         >
-          {/* application center staged content */}
+          {/*
+          - skeleton container
+          */}
           <Grid
             ref={controlContainerRef}
             className={'content-container'}
             id={'main-content'}
             item
-            xs={12}
-            sm={12}
             sx={{
-              // position: 'absolute',
-              // top: 5,
               display: 'flex',
-              width: '97%',
-              height: '97%',
-              // height: '85%',
-              // border: '1px dashed #DD1616',
+              width: '90%',
+              height: '95%',
               borderRadius: '1rem',
               margin: 'auto',
-              // padding: 5,
               justifyContent: 'center',
               alignItems: 'center',
               alignContent: 'center',
               flexGrow: 3,
-              flexShrink: 10
+              flexShrink: 3
             }}
           >
             <MemoryRouter
@@ -229,7 +221,7 @@ export function App ({
                             id={'landing-component-container'}
                             style={{
                               display: 'flex',
-                              border: '5px solid pink',
+                              border: '1px dashed white',
                               borderRadius: 15,
                               width: '100%',
                               height: '100%',
