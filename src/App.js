@@ -92,6 +92,11 @@ export function App ({
       }
     }
   })
+
+  // eslint-disable-next-line no-unused-vars
+  const [rootWidth, setRootWidth] = React.useState(window.innerWidth)
+  // eslint-disable-next-line no-unused-vars
+  const [rootHeight, setRootHeight] = React.useState(window.innerHeight)
   // update theme based on state
   const theme = responsiveFontSizes(createTheme({
     ...Configuration.themes.find(
@@ -99,8 +104,34 @@ export function App ({
     ).theme
   }))
   const rootContainerRef = React.useRef(null)
+
   const layoutContainerRef = React.useRef(null)
   const controlContainerRef = React.useRef(null)
+  const contentContainerRef = React.useRef(null)
+
+  React.useLayoutEffect(() => {
+    const rootWidth = rootContainerRef.current.offsetWidth
+    const rootHeight = rootContainerRef.current.offsetHeight
+    const layoutWidth = layoutContainerRef.current.offsetWidth
+    const layoutHeight = layoutContainerRef.current.offsetHeight
+    const controlWidth = controlContainerRef.current.offsetWidth
+    const controlHeight = controlContainerRef.current.offsetHeight
+    const contentWidth = contentContainerRef.current.offsetWidth
+    const contentHeight = contentContainerRef.current.offsetHeight
+    console.log('content width: ', contentWidth)
+    console.log('content height: ', contentHeight)
+    console.log('layout width: ', layoutWidth)
+    console.log('layout height: ', layoutHeight)
+    console.log('control width: ', controlWidth)
+    console.log('control height: ', controlHeight)
+    console.log('root width: ', rootWidth)
+    console.log('root height: ', rootHeight)
+    console.log('window width: ', window.innerWidth)
+    console.log('window height: ', window.innerHeight)
+    console.log('window:', window)
+    setRootWidth(rootWidth)
+    setRootHeight(rootHeight)
+  }, [rootContainerRef.current])
 
   return (
     <ThemeProvider
@@ -117,13 +148,12 @@ export function App ({
           height: '100vh',
           width: '100vw',
           display: 'flex',
-          padding: 5,
           backgroundImage: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
           backgroundSize: 'cover',
-          boxShadow: 'inset 0 0 0 2000px rgba(0, 0, 0, 0.5)',
-          alignItems: 'center',
-          alignContent: 'center',
-          justifyContent: 'center'
+          padding: '5px',
+          alignItems: 'normal',
+          alignContent: 'normal',
+          justifyContent: 'flex-start'
         }}
       >
         {/*
@@ -133,42 +163,33 @@ export function App ({
           ref={layoutContainerRef}
           id={'layout-container'}
           container
-          alignItems={'flex-start'}
-          justifyContent={'flex-start'}
-          alignContent={'flex-start'}
+          sx={{
+            border: '1px solid red',
+            padding: `${(Number(rootHeight * 0.10) + Number(rootWidth * 0.10)) / 2}px`
+            // width: '80%',
+            // height: `${Number(rootHeight * 0.90)}px`
+            // height: '80%'
+          }}
           style={{
-            display: 'flex',
-            justifyContent: 'flex-start',
-            alignItems: 'flex-start',
-            alignContent: 'flex-start',
-            borderRadius: '1rem',
-            height: '97%',
-            width: '97%',
-            margin: 0,
-            flexGrow: 3,
-            flexShrink: 10,
-            padding: 5
+            flexDirection: 'column',
+            flexGrow: 2,
+            flexShrink: 0
           }}
         >
           {/*
           - skeleton container
           */}
           <Grid
-            ref={controlContainerRef}
+            ref={contentContainerRef}
             className={'content-container'}
             id={'main-content'}
             item
             sx={{
-              display: 'flex',
-              width: '90%',
-              height: '95%',
-              borderRadius: '1rem',
-              margin: 'auto',
               justifyContent: 'center',
               alignItems: 'center',
               alignContent: 'center',
-              flexGrow: 3,
-              flexShrink: 3
+              flexGrow: 1,
+              flexShrink: 0
             }}
           >
             <MemoryRouter
@@ -177,15 +198,6 @@ export function App ({
               className={'memory-router'}
               id={'app-memory-router'}
             >
-              {/* <Breadcrumbs
-                className={'breadcrumb-container'}
-                id={'breadcrumbs'}
-                aria-label='breadcrumbs'
-                style={{
-                  // top: 0,
-                  backgroundColor: 'pink'
-                }}
-              > */}
                 {/*
                   TODO: 🧐 research if is it ok to embed the Switch and Router components within MemoryRouter?
                 */}
@@ -220,13 +232,11 @@ export function App ({
                             className={'landing-component-container'}
                             id={'landing-component-container'}
                             style={{
-                              display: 'flex',
+                              // display: 'flex',
                               border: '1px dashed white',
-                              borderRadius: 15,
-                              width: '100%',
-                              height: '100%',
-                              flexGrow: 10,
-                              flexShrink: 10
+                              flexGrow: 5,
+                              flexShrink: 0
+                              // flexWrap: 'nowrap'
                             }}
                           >
                             <Landing
@@ -262,6 +272,7 @@ export function App ({
           </Grid>
           {/* application control */}
           <Grid
+            ref={controlContainerRef}
             id={'application-control-container'}
             item
             sx={{
