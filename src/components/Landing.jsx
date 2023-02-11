@@ -8,7 +8,7 @@ import {
   createTheme,
   ThemeProvider,
   Paper,
-  Grid,
+  // Grid,
   Stack,
   Box,
   Typography,
@@ -19,7 +19,8 @@ import {
   List,
   ListItem,
   ListItemText,
-  ListItemIcon
+  ListItemIcon,
+  useMediaQuery
 } from '@mui/material'
 import { useSpring, animated } from 'react-spring'
 
@@ -497,7 +498,6 @@ function Section ({
             <List
                 dense={true}
                 disablePadding={true}
-                disableGutters={true}
                 sx={{
                 }}
               >
@@ -507,14 +507,12 @@ function Section ({
                     <ListItem
                       dense={true}
                       component={'div'}
-                      alignItems={'center'}
                       divider={false}
                       key={
                         `${index}-${feature.name.toLowerCase().replaceAll(' ', '')}`
                       }
                     >
                       <ListItemIcon
-                        alignItems={'center'}
                         sx={{
                           padding: 1,
                           color: 'info.main',
@@ -578,13 +576,13 @@ function Sections ({ data = landingSections, ...props }) {
       alignContent='center'
       sx={{
         display: 'flex',
-        width: {
-          xs: '10%',
-          sm: '20%',
-          md: '30%',
-          lg: '40%',
-          xl: '50%'
-        },
+        // width: {
+        //   xs: '10%',
+        //   sm: '20%',
+        //   md: '30%',
+        //   lg: '40%',
+        //   xl: '50%'
+        // },
         flexGrow: data.length,
         flexShrink: data.length
       }}
@@ -610,7 +608,19 @@ Sections.propTypes = {
 }
 
 function Landing ({ theme = {}, ...props }) {
+  const containerRef = React.useRef(null)
+  // eslint-disable-next-line no-unused-vars
+  const [width, setWidth] = React.useState(0)
+  // eslint-disable-next-line no-unused-vars
+  const [height, setHeight] = React.useState(0)
+  // eslint-disable-next-line no-unused-vars
+  const landScapeQuery = useMediaQuery('screen and (orientation: landscape)')
+  React.useLayoutEffect(() => {
+    setWidth(containerRef.current.offsetWidth)
+    setHeight(containerRef.current.offsetHeight)
+  })
   const [services, setServices] = React.useState([])
+  // eslint-disable-next-line no-unused-vars
   React.useEffect(() => {
     const fetchServices = async () => {
       fetch('http://localhost:3001/services', {
@@ -635,10 +645,6 @@ function Landing ({ theme = {}, ...props }) {
   const location = useLocation()
   // eslint-disable-next-line no-unused-vars
   const history = useHistory()
-  console.log('theme', {
-    ...theme,
-    ...localTheme
-  })
 
   return (
     <ThemeProvider theme={{ ...theme, ...localTheme }}>
@@ -648,26 +654,105 @@ function Landing ({ theme = {}, ...props }) {
         id={'landing-router'}
         className={'memory-router'}
       >
-        <Grid
+        <Stack
+          ref={containerRef}
+          direction={'column'}
+          id={'landing-grid'}
+          className={'landing-grid'}
+          sx={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            alignContent: 'center',
+            flexWrap: 'wrap'
+          }}
+        >
+          <Stack
+          >
+            <Box
+            >
+              <Title
+                id={'landing-title-component'}
+                className={'landing-title-component'}
+                color={'#12B70FAB'}
+                theme={{ ...theme, ...localTheme }}
+              />
+            </Box>
+            <Box
+            >
+              <Subtitle
+                id={'landing-subtitle-component'}
+                className={'landing-subtitle-component'}
+                color={'#FFFFFF'}
+                theme={{ ...theme, ...localTheme }}
+              />
+            </Box>
+          </Stack>
+          {/* <Box
+          ref={containerRef}
+          direction={'column'}
+          id={'landing-grid'}
+          className={'landing-grid'}
+          sx={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            alignContent: 'center',
+            flexWrap: 'wrap'
+          }}
+          >
+            <Title
+              id={'landing-title-component'}
+              className={'landing-title-component'}
+              color={'#12B70FAB'}
+              theme={{ ...theme, ...localTheme }}
+            />
+            <Subtitle
+              id={'landing-subtitle-component'}
+              className={'landing-subtitle-component'}
+              color={'#FFFFFF'}
+              theme={{ ...theme, ...localTheme }}
+            />
+          </Box> */}
+          <Box
+            className={'landing-sections-item'}
+            alignContent={'center'}
+            justifyContent={'center'}
+            alignItems={'center'}
+            sx={{
+              border: '1px solid white',
+              width: {
+                xs: '50%',
+                sm: '50%',
+                md: '50%',
+                lg: '50%',
+                xl: '50%'
+              },
+              height: {
+                xs: '50%',
+                sm: '50%',
+                md: '50%',
+                lg: '50%',
+                xl: '50%'
+              }
+            }}
+          >
+            <Sections
+              data={services}
+              theme={{ ...theme, ...localTheme }}
+            />
+          </Box>
+
+        </Stack>
+        {/* <Grid
+          ref={containerRef}
           container
           direction={'column'}
           id={'landing-grid'}
           className={'landing-grid'}
-          rowSpacing={{
-            xs: 1,
-            sm: 2,
-            md: 3
-          }}
-          columnSpacing={{
-            xs: 1,
-            sm: 2,
-            md: 3
-          }}
-          style={{
-            display: 'flex',
+          sx={{
             justifyContent: 'center',
             alignItems: 'center',
-            alignContent: 'center'
+            alignContent: 'center',
+            flexWrap: 'wrap'
           }}
         >
           <Grid
@@ -678,7 +763,6 @@ function Landing ({ theme = {}, ...props }) {
             justifyContent={'center'}
             alignItems={'center'}
             sx={{
-              top: 0
             }}
           >
             <Title
@@ -695,6 +779,8 @@ function Landing ({ theme = {}, ...props }) {
             alignContent={'center'}
             justifyContent={'center'}
             alignItems={'center'}
+            sx={{
+            }}
           >
             <Subtitle
               id={'landing-subtitle-component'}
@@ -705,22 +791,34 @@ function Landing ({ theme = {}, ...props }) {
           </Grid>
           <Grid
             item
-            // xs={'auto'}
-            // sm={'auto'}
-            // md={'auto'}
-            // lg={'auto'}
-            // xl={'auto'}
             className={'landing-sections-item'}
             alignContent={'center'}
-            justifyContent={'space-between'}
+            justifyContent={'center'}
             alignItems={'center'}
+            sx={{
+              border: '1px solid white',
+              width: {
+                xs: '50%',
+                sm: '50%',
+                md: '50%',
+                lg: '50%',
+                xl: '50%'
+              },
+              height: {
+                xs: '50%',
+                sm: '50%',
+                md: '50%',
+                lg: '50%',
+                xl: '50%'
+              }
+            }}
           >
             <Sections
               data={services}
               theme={{ ...theme, ...localTheme }}
             />
           </Grid>
-        </Grid>
+        </Grid> */}
       </MemoryRouter>
     </ThemeProvider>
   )
