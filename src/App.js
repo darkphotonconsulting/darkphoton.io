@@ -43,6 +43,7 @@ import About from './components/About.jsx'
 
 // eslint-disable-next-line no-unused-vars
 import Crumb from './components/primitives/Crumb.jsx'
+// import { orthographicDepthToViewZ } from 'postprocessing'
 
 App.propTypes = {
   colors: PropTypes.string,
@@ -106,7 +107,7 @@ export function App ({
   const rootContainerRef = React.useRef(null)
 
   const layoutContainerRef = React.useRef(null)
-  const controlContainerRef = React.useRef(null)
+  // const controlContainerRef = React.useRef(null)
   const contentContainerRef = React.useRef(null)
 
   React.useLayoutEffect(() => {
@@ -114,16 +115,16 @@ export function App ({
     const rootHeight = rootContainerRef.current.offsetHeight
     const layoutWidth = layoutContainerRef.current.offsetWidth
     const layoutHeight = layoutContainerRef.current.offsetHeight
-    const controlWidth = controlContainerRef.current.offsetWidth
-    const controlHeight = controlContainerRef.current.offsetHeight
+    // const controlWidth = controlContainerRef.current.offsetWidth
+    // const controlHeight = controlContainerRef.current.offsetHeight
     const contentWidth = contentContainerRef.current.offsetWidth
     const contentHeight = contentContainerRef.current.offsetHeight
     console.log('content width: ', contentWidth)
     console.log('content height: ', contentHeight)
     console.log('layout width: ', layoutWidth)
     console.log('layout height: ', layoutHeight)
-    console.log('control width: ', controlWidth)
-    console.log('control height: ', controlHeight)
+    // console.log('control width: ', controlWidth)
+    // console.log('control height: ', controlHeight)
     console.log('root width: ', rootWidth)
     console.log('root height: ', rootHeight)
     console.log('window width: ', window.innerWidth)
@@ -139,38 +140,45 @@ export function App ({
     >
       <CssBaseline />
       {/*
-        root container
+        root div (flex container)
       */}
       <div
         ref={rootContainerRef}
         id={'root-container'}
         style={{
-          height: '100vh',
-          width: '100vw',
           display: 'flex',
+          flex: '1 1 auto',
           backgroundImage: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
           backgroundSize: 'cover',
-          padding: '5px',
-          alignItems: 'normal',
-          alignContent: 'normal',
-          justifyContent: 'flex-start'
+          // height: '100%',
+          /*
+          padding is configured as a percentage of the root container's width and height
+          */
+          paddingTop: `${rootHeight * 0.02}px`,
+          paddingBottom: `${rootHeight * 0.02}px`,
+          paddingLeft: `${rootWidth * 0.02}px`,
+          paddingRight: `${rootWidth * 0.02}px`,
+          /*
+          align items, content & justification with center
+          */
+          alignItems: 'center',
+          alignContent: 'center',
+          justifyContent: 'center'
         }}
       >
         {/*
-          layout container
+          layout container (flex item)
         */}
         <Grid
           ref={layoutContainerRef}
           id={'layout-container'}
+          spacing={5}
           container
           sx={{
-            border: '1px solid red',
-            padding: `${(Number(rootHeight * 0.10) + Number(rootWidth * 0.10)) / 2}px`
-            // width: '80%',
-            // height: `${Number(rootHeight * 0.90)}px`
-            // height: '80%'
-          }}
-          style={{
+            border: '5px dashed red',
+            padding: 5,
+            margin: 0,
+            order: 0,
             flexDirection: 'column',
             flexGrow: 2,
             flexShrink: 0
@@ -185,11 +193,13 @@ export function App ({
             id={'main-content'}
             item
             sx={{
-              justifyContent: 'center',
+              // justifyContent: 'flex-start',
               alignItems: 'center',
               alignContent: 'center',
               flexGrow: 1,
-              flexShrink: 0
+              flexShrink: 0,
+              order: 0,
+              border: '5px dashed green'
             }}
           >
             <MemoryRouter
@@ -228,22 +238,21 @@ export function App ({
                           />
                           )
                         : (
-                          <div
+                          <Box
                             className={'landing-component-container'}
                             id={'landing-component-container'}
-                            style={{
-                              // display: 'flex',
-                              border: '1px dashed white',
-                              flexGrow: 5,
+                            sx={{
+                              padding: 5,
+                              flexGrow: 1,
                               flexShrink: 0
-                              // flexWrap: 'nowrap'
                             }}
                           >
                             <Landing
                               className={'landing-component'}
                               id={'app-landing'}
+                              theme={theme}
                             />
-                          </div>
+                          </Box>
                           )
                     }
                     </Route>
@@ -271,17 +280,22 @@ export function App ({
 
           </Grid>
           {/* application control */}
-          <Grid
+          {/* <Grid
             ref={controlContainerRef}
             id={'application-control-container'}
             item
             sx={{
-              display: 'flex',
-              justifyContent: 'center',
+              position: 'relative',
+              flex: 1,
+              // bottom: 0,
+              justifyContent: 'space-between',
               alignItems: 'center',
-              alignContent: 'center'
+              alignContent: 'center',
+              border: '10px dashed black',
+              order: 1
             }}
           >
+            Text
             <ControlBar
               state={state}
               setState={setState}
@@ -290,8 +304,16 @@ export function App ({
               className="application-control-bar"
               id={'application-control-bar'}
             />
-          </Grid>
+          </Grid> */}
         </Grid>
+        <ControlBar
+              state={state}
+              setState={setState}
+              theme={theme}
+              config={Configuration}
+              className="application-control-bar"
+              id={'application-control-bar'}
+            />
       </div>
     </ThemeProvider>
   )

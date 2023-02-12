@@ -2,12 +2,12 @@
     overflow: hidden;
 }
 
-@media screen and (min-width: 1024px) {
+@media screen and (min-width: 300px) {
     .control-bar {
         opacity: 1;
     }
 }
-@media screen and (max-width: 1024px) {
+@media screen and (max-width: 300px) {
     .control-bar {
         opacity: 0;
     }
