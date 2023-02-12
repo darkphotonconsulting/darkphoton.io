@@ -19,10 +19,14 @@ import {
   Configuration
 } from './config/Configuration.js'
 
+// import {
+
+// } from '@mui/material/styles'
 import {
   createTheme,
-  responsiveFontSizes,
   ThemeProvider,
+  responsiveFontSizes,
+  // ThemeProvider,
   // Box,
   CssBaseline,
   Grid,
@@ -99,11 +103,24 @@ export function App ({
   // eslint-disable-next-line no-unused-vars
   const [rootHeight, setRootHeight] = React.useState(window.innerHeight)
   // update theme based on state
-  const theme = responsiveFontSizes(createTheme({
-    ...Configuration.themes.find(
-      theme => theme.name === state?.theme?.mode
-    ).theme
-  }))
+  // const theme = responsiveFontSizes(createTheme({
+  //   ...Configuration.themes.find(
+  //     theme => theme.name === state?.theme?.mode
+  //   ).theme
+  // }))
+  const theme = React.useMemo(() =>
+    responsiveFontSizes(createTheme(
+      {
+        ...Configuration.themes.find(
+          theme => theme.name === state?.theme?.mode
+        ).theme
+      }
+    )),
+  [state?.theme?.mode]
+  )
+
+  theme.palette.mode = state?.theme?.mode
+  console.log('theme: ', theme.palette.mode, theme)
   const rootContainerRef = React.useRef(null)
 
   const layoutContainerRef = React.useRef(null)
@@ -137,12 +154,13 @@ export function App ({
   return (
     <ThemeProvider
       theme={theme}
+      // enableColorScheme={true}
     >
       <CssBaseline />
       {/*
         root div (flex container)
       */}
-      <div
+      <Box
         ref={rootContainerRef}
         id={'root-container'}
         style={{
@@ -172,11 +190,11 @@ export function App ({
         <Grid
           ref={layoutContainerRef}
           id={'layout-container'}
-          spacing={5}
+          spacing={2}
           container
           sx={{
-            border: '5px dashed red',
-            padding: 5,
+            border: '1px dashed red',
+            padding: 2,
             margin: 0,
             order: 0,
             flexDirection: 'column',
@@ -187,124 +205,99 @@ export function App ({
           {/*
           - skeleton container
           */}
-          <Grid
-            ref={contentContainerRef}
-            className={'content-container'}
-            id={'main-content'}
-            item
-            sx={{
-              // justifyContent: 'flex-start',
-              alignItems: 'center',
-              alignContent: 'center',
-              flexGrow: 1,
-              flexShrink: 0,
-              order: 0,
-              border: '5px dashed green'
-            }}
-          >
-            <MemoryRouter
-              initialEntries={['/']}
-              initialIndex={0}
-              className={'memory-router'}
-              id={'app-memory-router'}
+            <Grid
+              ref={contentContainerRef}
+              className={'content-container'}
+              id={'main-content'}
+              item
+              sx={{
+                // justifyContent: 'flex-start',
+                alignItems: 'center',
+                alignContent: 'center',
+                flexGrow: 1,
+                flexShrink: 0,
+                order: 0
+                // border: '5px dashed green'
+              }}
             >
-                {/*
-                  TODO: 🧐 research if is it ok to embed the Switch and Router components within MemoryRouter?
-                */}
-                <Switch
-                  className={'switch-container'}
-                  id={'app-switch'}
-                >
-                  <Router
-                    className={'router-container'}
-                    id={'app-router'}
+              <MemoryRouter
+                initialEntries={['/']}
+                initialIndex={0}
+                className={'memory-router'}
+                id={'app-memory-router'}
+              >
+                  {/*
+                    TODO: 🧐 research if is it ok to embed the Switch and Router components within MemoryRouter?
+                  */}
+                  <Switch
+                    className={'switch-container'}
+                    id={'app-switch'}
                   >
-                    <Route
-                      className={'route-container'}
-                      id={'home-route'}
-                      exact
-                      path='/'
+                    <Router
+                      className={'router-container'}
+                      id={'app-router'}
                     >
-                    {
-                      state.splash.hidden === false
-                        ? (
-                          <Splash
-                            className={'splash-component'}
-                            id={'splash'}
-                            state={state}
-                            setState={setState}
-                            theme={theme}
-                            visible={true}
-                          />
-                          )
-                        : (
-                          <Box
-                            className={'landing-component-container'}
-                            id={'landing-component-container'}
-                            sx={{
-                              padding: 5,
-                              flexGrow: 1,
-                              flexShrink: 0
-                            }}
-                          >
-                            <Landing
-                              className={'landing-component'}
-                              id={'app-landing'}
+                      <Route
+                        className={'route-container'}
+                        id={'home-route'}
+                        exact
+                        path='/'
+                      >
+                      {
+                        state.splash.hidden === false
+                          ? (
+                            <Splash
+                              className={'splash-component'}
+                              id={'splash'}
+                              state={state}
+                              setState={setState}
                               theme={theme}
+                              visible={true}
                             />
-                          </Box>
-                          )
-                    }
-                    </Route>
-                    <Route exact path='/test'>
-                      <Box>
-                        <Crumb/>
-                        <div>Testing 123!</div>
-                      </Box>
-                    </Route>
-                    <Route exact path='/services'>
-                      <Box>
-                        <Crumb/>
-                        <Services/>
-                      </Box>
-                    </Route>
-                    <Route exact path='/about'>
-                      <Box>
-                        <About/>
-                      </Box>
-                    </Route>
-                  </Router>
-                </Switch>
-              {/* </Breadcrumbs> */}
-            </MemoryRouter>
+                            )
+                          : (
+                            <Box
+                              className={'landing-component-container'}
+                              id={'landing-component-container'}
+                              sx={{
+                                padding: 5,
+                                flexGrow: 1,
+                                flexShrink: 0
+                              }}
+                            >
+                                <Landing
+                                  className={'landing-component'}
+                                  id={'app-landing'}
+                                  theme={theme}
+                                />
+                            </Box>
+                            )
+                      }
+                      </Route>
+                      <Route exact path='/test'>
+                        <Box>
+                          <Crumb/>
+                          <Box>Testing 123!</Box>
+                        </Box>
+                      </Route>
+                      <Route exact path='/services'>
+                        <Box>
+                          <Crumb/>
+                          <Services/>
+                        </Box>
+                      </Route>
+                      <Route exact path='/about'>
+                        <Box>
+                          <About/>
+                        </Box>
+                      </Route>
+                    </Router>
+                  </Switch>
+                {/* </Breadcrumbs> */}
+              </MemoryRouter>
+            </Grid>
 
-          </Grid>
           {/* application control */}
-          {/* <Grid
-            ref={controlContainerRef}
-            id={'application-control-container'}
-            item
-            sx={{
-              position: 'relative',
-              flex: 1,
-              // bottom: 0,
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              alignContent: 'center',
-              border: '10px dashed black',
-              order: 1
-            }}
-          >
-            Text
-            <ControlBar
-              state={state}
-              setState={setState}
-              theme={theme}
-              config={Configuration}
-              className="application-control-bar"
-              id={'application-control-bar'}
-            />
-          </Grid> */}
         </Grid>
         <ControlBar
               state={state}
@@ -314,7 +307,7 @@ export function App ({
               className="application-control-bar"
               id={'application-control-bar'}
             />
-      </div>
+      </Box>
     </ThemeProvider>
   )
 }

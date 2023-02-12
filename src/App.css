@@ -9,6 +9,12 @@
   pointer-events: none;
 }
 
+@font-face {
+  font-family: 'Nasalization';
+  src: local('Nasalization') url('./fonts/nasalization_regular.otf') format('opentype') tech(variations);
+}
+
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;

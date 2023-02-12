@@ -3,10 +3,18 @@ import './nasalization_regular.otf'
 import React from 'react'
 import PropTypes from 'prop-types'
 // import { randomUUID } from 'crypto'
+
 import {
   // eslint-disable-next-line no-unused-vars
-  createTheme,
+  Configuration
+} from '../config/Configuration.js'
+
+import {
+  // responsiveFontSizes,
+  // eslint-disable-next-line no-unused-vars
   ThemeProvider,
+  // useTheme,
+  createTheme,
   Paper,
   // Grid,
   Stack,
@@ -25,6 +33,7 @@ import {
   useMediaQuery
   // collapseClasses
 } from '@mui/material'
+
 import { useSpring, animated } from 'react-spring'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -124,7 +133,7 @@ const landingSections = [
   }
 ]
 function Title ({
-  theme = {},
+  theme,
   text = 'Dark Photon IT',
   color = 'white',
   ...props
@@ -168,11 +177,11 @@ function Title ({
             fontWeight: 'bold',
             color: `${color}`,
             fontSize: {
-              xs: '.5rem',
-              sm: '.75rem',
-              md: '1rem',
-              lg: '2rem',
-              xl: '3rem'
+              xs: '10vh',
+              sm: '10vh',
+              md: '10vh',
+              lg: '10vh',
+              xl: '10vh'
             }
           }}
         >
@@ -191,8 +200,9 @@ Title.propTypes = {
 }
 
 function Subtitle ({
-  theme = {},
-  text = 'Solutions for a type 1 civilization',
+  theme,
+  // text = 'Solutions for a type 1 civilization',
+  text = 'Developing the future',
   color = 'white',
   ...props
 }) {
@@ -239,11 +249,11 @@ function Subtitle ({
           className={'landing-subtitle'}
           sx={{
             fontSize: {
-              xs: '.5rem',
-              sm: '.75rem',
-              md: '1rem',
-              lg: '2rem',
-              xl: '3rem'
+              xs: '1vh',
+              sm: '1vh',
+              md: '1vh',
+              lg: '1vh',
+              xl: '1vh'
             },
             fontWeight: 'bold',
             color: `${color}`
@@ -269,7 +279,7 @@ function Section ({
   roadmap = false,
   tiers = [],
   precedence = 0,
-  theme = {},
+  theme,
   ...props
 }) {
   // eslint-disable-next-line no-unused-vars
@@ -334,7 +344,7 @@ function Section ({
               sx={{
                 display: 'flex',
                 width: '50%',
-                backgroundColor: `${theme.palette.primary.main}`,
+                backgroundColor: theme.palette.primary.main,
                 textAlign: 'center',
                 // verticalAlign: 'middle',
                 justifyContent: 'center',
@@ -375,7 +385,7 @@ function Section ({
                 alignContent: 'flex-start',
                 alignItems: 'flex-start',
                 justifyContent: 'flex-start',
-                backgroundColor: `${theme.palette.primary.main}`,
+                backgroundColor: theme.palette.primary.main,
                 textAlign: 'center',
                 verticalAlign: 'middle'
               }}
@@ -383,9 +393,6 @@ function Section ({
               {/* tier menu */}
               <Box
                 sx={{
-                  backgroundColor: 'primary.main'
-                  // textAlign: 'center',
-                  // verticalAlign: 'middle'
                 }}
               >
                 <Tooltip
@@ -465,8 +472,7 @@ function Section ({
               <Box
                 sx={{
                   textAlign: 'center',
-                  verticalAlign: 'middle',
-                  backgroundColor: `${theme.palette.primary.main}`
+                  verticalAlign: 'middle'
                 }}
               >
                 {roadmap
@@ -494,28 +500,24 @@ function Section ({
             <Divider
               sx={{
                 width: '100%',
-                color: 'info.main'
+                color: theme.palette.primary.main
               }}
+              variant={'fullWidth'}
             />
           </Box>
           {/* info stack */}
           <Stack
             direction={'row'}
-            // spacing={1}
             sx={{
-              // display: 'flex',
               alignContent: 'center',
               alignItems: 'center',
               textAlign: 'center',
               justifyContent: 'center'
-              // flexGrow: landingSections.length,
-              // flexShrink: landingSections.length
             }}
           >
             {/* service description */}
             <Box
               sx={{
-                // border: '1px solid black',
                 width: '50%'
               }}
             >
@@ -627,7 +629,7 @@ Section.propTypes = {
   color: PropTypes.string
 }
 
-function Sections ({ data = landingSections, theme = {}, ...props }) {
+function Sections ({ data = landingSections, theme, ...props }) {
   const sorted = data.sort((a, b) => a.precedence - b.precedence)
   return (
     <Stack
@@ -666,7 +668,13 @@ Sections.propTypes = {
   data: PropTypes.array
 }
 
-function Landing ({ theme = {}, ...props }) {
+function Landing ({ theme, ...props }) {
+  theme = {
+    ...theme,
+    typography: {
+      fontFamily: 'Nasalization, sans-serif'
+    }
+  }
   const containerRef = React.useRef(null)
   // eslint-disable-next-line no-unused-vars
   const [width, setWidth] = React.useState(0)
@@ -674,11 +682,10 @@ function Landing ({ theme = {}, ...props }) {
   const [height, setHeight] = React.useState(0)
   // eslint-disable-next-line no-unused-vars
   const landScapeQuery = useMediaQuery('screen and (orientation: landscape)')
-  React.useLayoutEffect(() => {
-    setWidth(containerRef.current.offsetWidth)
-    setHeight(containerRef.current.offsetHeight)
-    // console.log('theme', theme.palette.mode, theme)
-  })
+  // React.useLayoutEffect(() => {
+  //   setWidth(containerRef.current.offsetWidth)
+  //   setHeight(containerRef.current.offsetHeight)
+  // })
   const [services, setServices] = React.useState([])
   // eslint-disable-next-line no-unused-vars
   React.useEffect(() => {
@@ -739,35 +746,10 @@ function Landing ({ theme = {}, ...props }) {
                 id={'landing-subtitle-component'}
                 className={'landing-subtitle-component'}
                 color={'#FFFFFF'}
-                theme={{ ...theme, ...localTheme }}
+                theme={theme}
               />
             </Box>
           </Stack>
-          {/* <Box
-          ref={containerRef}
-          direction={'column'}
-          id={'landing-grid'}
-          className={'landing-grid'}
-          sx={{
-            justifyContent: 'center',
-            alignItems: 'center',
-            alignContent: 'center',
-            flexWrap: 'wrap'
-          }}
-          >
-            <Title
-              id={'landing-title-component'}
-              className={'landing-title-component'}
-              color={'#12B70FAB'}
-              theme={{ ...theme, ...localTheme }}
-            />
-            <Subtitle
-              id={'landing-subtitle-component'}
-              className={'landing-subtitle-component'}
-              color={'#FFFFFF'}
-              theme={{ ...theme, ...localTheme }}
-            />
-          </Box> */}
           <Stack
             justifyContent={'center'}
             alignItems={'baseline'}
@@ -808,7 +790,7 @@ function Landing ({ theme = {}, ...props }) {
             >
               <Sections
                 data={services}
-                theme={{ ...theme, ...localTheme }}
+                theme={theme}
               />
             </Box>
           </Stack>
