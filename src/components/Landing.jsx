@@ -10,13 +10,10 @@ import {
 } from '../config/Configuration.js'
 
 import {
-  // responsiveFontSizes,
   // eslint-disable-next-line no-unused-vars
   ThemeProvider,
-  // useTheme,
   createTheme,
   Paper,
-  // Grid,
   Stack,
   Box,
   Typography,
@@ -41,7 +38,8 @@ import {
   faRoad,
   faMapLocationDot,
   faBars,
-  faDotCircle
+  faDotCircle,
+  faInfoCircle
 } from '@fortawesome/pro-duotone-svg-icons'
 import {
   useLocation,
@@ -346,18 +344,15 @@ function Section ({
                 width: '50%',
                 backgroundColor: theme.palette.primary.main,
                 textAlign: 'center',
-                // verticalAlign: 'middle',
                 justifyContent: 'center',
                 alignItems: 'center',
                 alignContent: 'center'
-                // border: '1px solid black'
               }}
             >
               <Typography
                 component={'div'}
                 sx={{
                   fontWeight: 'bold',
-                  // border: '1px solid black',
                   fontSize: {
                     xs: '.35rem',
                     sm: '.55rem',
@@ -378,7 +373,7 @@ function Section ({
             />
             {/* indicator icons, roadmap, etc. */}
             <Stack
-              spacing={0}
+              spacing={2}
               direction='row'
               sx={{
                 width: '50%',
@@ -408,21 +403,8 @@ function Section ({
                       handleTierMenu(event)
                     }}
                     ref={tierMenuRef}
-                    // edge
                   >
                     <FontAwesomeIcon icon={faBars} />
-                    {/* <Typography
-                      sx={{
-                        fontSize: {
-                          xs: '.25rem',
-                          sm: '.35rem',
-                          md: '.45rem',
-                          lg: '.95rem',
-                          xl: '1rem'
-                        }
-                      }}
-                    >Select Plan
-                    </Typography> */}
                   </IconButton>
                 </Tooltip>
                 <Menu
@@ -463,11 +445,23 @@ function Section ({
                   })
                   }
                 </Menu>
-                <Chip
-                  id={`${title.toLowerCase().replaceAll(' ', '')}-tier-menu-chip`}
-                  label={tier}
-                />
-
+                <Tooltip
+                  title={tier}
+                >
+                  <Chip
+                    id={`${title.toLowerCase().replaceAll(' ', '')}-tier-menu-chip`}
+                    label={tier}
+                  />
+                </Tooltip>
+              </Box>
+              <Box>
+                <Tooltip
+                  title={'More information'}
+                >
+                  <IconButton>
+                    <FontAwesomeIcon icon={faInfoCircle} />
+                  </IconButton>
+                </Tooltip>
               </Box>
               <Box
                 sx={{
@@ -477,17 +471,28 @@ function Section ({
               >
                 {roadmap
                   ? (
-                  <IconButton>
-                    <FontAwesomeIcon icon={faRoad} />
-                  </IconButton>
+                    <Tooltip
+                      title={'View roadmap'}
+                    >
+                      <IconButton>
+                        <FontAwesomeIcon icon={faRoad} />
+                      </IconButton>
+                    </Tooltip>
+
                     )
                   : (
-                  <IconButton>
-                    <FontAwesomeIcon icon={faMapLocationDot} />
-                  </IconButton>
+                    <Tooltip
+                      title={'Sign up now!'}
+                    >
+                      <IconButton>
+                        <FontAwesomeIcon icon={faMapLocationDot} />
+                      </IconButton>
+                    </Tooltip>
+
                     )
                 }
               </Box>
+
             </Stack>
           </Stack>
           {/* horizontal division */}
@@ -523,7 +528,6 @@ function Section ({
             >
               <Typography
                 sx={{
-                  // transform: 'translateY(-50%)',
                   fontSize: {
                     xs: '.15rem',
                     sm: '.25rem',
@@ -635,13 +639,8 @@ function Sections ({ data = landingSections, theme, ...props }) {
     <Stack
       direction='row'
       alignItems='start'
-      // justifyContent='space-between'
-      // alignContent='space-between'
       sx={{
         padding: 5,
-        // display: 'flex',
-        // flexGrow: data.length,
-        // flexShrink: data.length,
         flexWrap: 'wrap'
       }}
     >

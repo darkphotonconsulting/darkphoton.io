@@ -23,6 +23,7 @@ import {
 
 // } from '@mui/material/styles'
 import {
+  useMediaQuery,
   createTheme,
   ThemeProvider,
   responsiveFontSizes,
@@ -59,6 +60,8 @@ export function App ({
   colors = 'dark',
   ...props
 }) {
+  // eslint-disable-next-line no-unused-vars
+  const landScapeQuery = useMediaQuery('screen and (orientation: landscape)')
   // eslint-disable-next-line no-unused-vars
   const history = useHistory()
   // eslint-disable-next-line no-unused-vars
@@ -103,11 +106,6 @@ export function App ({
   // eslint-disable-next-line no-unused-vars
   const [rootHeight, setRootHeight] = React.useState(window.innerHeight)
   // update theme based on state
-  // const theme = responsiveFontSizes(createTheme({
-  //   ...Configuration.themes.find(
-  //     theme => theme.name === state?.theme?.mode
-  //   ).theme
-  // }))
   const theme = React.useMemo(() =>
     responsiveFontSizes(createTheme(
       {
@@ -120,7 +118,7 @@ export function App ({
   )
 
   theme.palette.mode = state?.theme?.mode
-  console.log('theme: ', theme.palette.mode, theme)
+  // console.log('theme: ', theme.palette.mode, theme)
   const rootContainerRef = React.useRef(null)
 
   const layoutContainerRef = React.useRef(null)

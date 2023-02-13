@@ -20,15 +20,13 @@ import {
 } from '@fortawesome/pro-duotone-svg-icons'
 
 import {
+  useMediaQuery,
   Stack,
   Box,
   Divider,
   AppBar,
   Toolbar,
   IconButton,
-  // SpeedDial,
-  // SpeedDialAction,
-  // SpeedDialIcon,
   Tooltip,
   Slide
 } from '@mui/material'
@@ -40,8 +38,11 @@ export function ControlBar ({
   config = {},
   ...props
 }) {
+  // eslint-disable-next-line no-unused-vars
+  const landScapeQuery = useMediaQuery('screen and (orientation: landscape)')
   const [play] = useSound(boopSound)
   const containerRef = React.useRef(null)
+  const appBarRef = React.useRef(null)
   // eslint-disable-next-line no-unused-vars
   const [userTheme, setUserTheme] = React.useState('dark')
   // eslint-disable-next-line no-unused-vars
@@ -54,6 +55,9 @@ export function ControlBar ({
   React.useLayoutEffect(() => {
     setWidth(containerRef.current.offsetWidth)
     setHeight(containerRef.current.offsetHeight)
+    console.log('window.innerWidth: ', window.innerWidth)
+    console.log('window.innerHeight: ', window.innerHeight)
+    console.log('in landscape', landScapeQuery)
   })
 
   React.useEffect(() => {
@@ -80,21 +84,34 @@ export function ControlBar ({
     fetchServices()
   }, [services])
 
+  // eslint-disable-next-line no-unused-vars
   const dimensions = {
     width: {
       hovered: {
-        xs: 60
+        xs: 60,
+        sm: 60,
+        md: 60,
+        lg: 60
       },
       idle: {
-        xs: 50
+        xs: 50,
+        sm: 50,
+        md: 50,
+        lg: 50
       }
     },
     height: {
       hovered: {
-        xs: 68
+        xs: 68,
+        sm: 68,
+        md: 68,
+        lg: 68
       },
       idle: {
-        xs: 64
+        xs: 64,
+        sm: 64,
+        md: 64,
+        lg: 64
       }
     }
   }
@@ -107,16 +124,19 @@ export function ControlBar ({
       unmountOnExit
       >
       <div
-        // id={'control-bar-container'}
         className={'control-bar-container'}
         ref={containerRef}
         style={{
-          display: 'flex',
-          width: '100%',
+          // display: 'flex',
+          // width: '100%',
+          alignItems: 'center',
+          justifyContent: 'center',
+          alignContent: 'center',
           bottom: 10
         }}
       >
         <AppBar
+          ref={appBarRef}
           id={'control-bar'}
           className={'control-bar'}
           position={
@@ -124,15 +144,17 @@ export function ControlBar ({
           }
           sx={{
             // opacity: 1,
-            display: 'flex',
-            backgroundColor: theme.palette.primary.dark,
+            // display: 'flex',
+            backgroundColor: theme.palette.primary.main,
             border: '1px solid black',
             top: 'auto',
-            width: state.bar.hovered ? `${dimensions.width.hovered.xs}%` : `${dimensions.width.idle.xs}%`,
-            height: state.bar.hovered ? `${dimensions.height.hovered.xs}px` : `${dimensions.width.idle.xs}px`,
+            width: '50%',
+            // width: state.bar.hovered ? `${dimensions.width.hovered.xs}%` : `${dimensions.width.idle.xs}%`,
+            // height: state.bar.hovered ? `${dimensions.height.hovered.xs}px` : `${dimensions.width.idle.xs}px`,
             bottom: 10,
-            transform: state.bar.hovered ? 'translateX(-40%)' : 'translateX(-50%)',
-            transition: state.bar.hovered ? 'width 5s, height 5s, transform 5s' : 'width 5s, height 5s, transform 5s',
+            // transform: state.bar.hovered ? 'translateX(-40%)' : 'translateX(-50%)',
+            transform: 'translateX(-50%)',
+            transition: state.bar.hovered ? 'width 3s, height 3s, transform 3s' : 'width 0.5s, height 0.5s, transform 0.5s',
             borderRadius: state.bar.hovered ? 60 : 50,
             justifyContent: 'center',
             alignContent: 'center',
@@ -175,37 +197,39 @@ export function ControlBar ({
               direction={'row'}
               spacing={theme.spacing(2)}
               sx={{
-                display: 'flex',
+                // display: 'flex',
                 flexGrow: Configuration.settings.appBar.sections.length,
-                flexShrink: Configuration.settings.appBar.sections.length
-                // border: '1px solid red'
+                flexShrink: Configuration.settings.appBar.sections.length,
+                // border: '1px solid red',
+                alignContent: 'baseline'
                 // width: '75%'
                 // padding: 5
               }}
             >
-                    <Stack direction='column'>
+                    {/* <Stack
+                      direction='column'
+                      sx={{}}
+                    >
 
                       <Box
                         style={{
-                          // display: 'flex',
-                          width: '100%'
-                          // border: '1px dashed blue'
+                          // width: '100%'
                         }}
                       >
                         <IconButton>
                           <FontAwesomeIcon icon={faMoon}/>
                         </IconButton>
                       </Box>
-                    </Stack>
+                    </Stack> */}
 
                     {Configuration.settings.appBar.sections.map((section, index) => {
                       return (
                         <Box
                           key={`controlbar-section-container-${section.name.toLowerCase()}`}
                           style={{
+                            // border: '1px solid red'
                             // display: 'flex',
-                            width: '100%'
-                            // border: '1px dashed blue'
+                            // width: '100%'
                           }}
                         >
                           <Tooltip
@@ -220,24 +244,24 @@ export function ControlBar ({
                             sx={{
                               fontSize: {
                                 xs: 'small',
-                                sm: 'medium',
-                                md: 'large',
-                                lg: 'large',
-                                xl: 'large'
+                                sm: 'small',
+                                md: 'small',
+                                lg: 'small',
+                                xl: 'small'
                               },
-                              height: {
-                                xs: '12px',
-                                sm: '24px',
-                                md: '42px',
-                                lg: '42px',
-                                xl: '42px'
+                              minHeight: {
+                                xs: '1%',
+                                sm: '1%',
+                                md: '1%',
+                                lg: '1%',
+                                xl: '1%'
                               },
-                              width: {
-                                xs: '12px',
-                                sm: '24px',
-                                md: '42px',
-                                lg: '42px',
-                                xl: '42px'
+                              minWidth: {
+                                xs: '1%',
+                                sm: '1%',
+                                md: '1%',
+                                lg: '1%',
+                                xl: '1%'
                               },
                               // height: 42,
                               // width: 42,
@@ -365,24 +389,24 @@ export function ControlBar ({
                         sx={{
                           fontSize: {
                             xs: 'small',
-                            sm: 'medium',
-                            md: 'large',
-                            lg: 'large',
-                            xl: 'large'
+                            sm: 'small',
+                            md: 'small',
+                            lg: 'small',
+                            xl: 'small'
                           },
-                          height: {
-                            xs: '12px',
-                            sm: '24px',
-                            md: '42px',
-                            lg: '42px',
-                            xl: '42px'
+                          minHeight: {
+                            xs: '1%',
+                            sm: '1%',
+                            md: '1%',
+                            lg: '1%',
+                            xl: '1%'
                           },
-                          width: {
-                            xs: '12px',
-                            sm: '24px',
-                            md: '42px',
-                            lg: '42px',
-                            xl: '42px'
+                          minWidth: {
+                            xs: '1%',
+                            sm: '1%',
+                            md: '1%',
+                            lg: '1%',
+                            xl: '1%'
                           },
                           // height: 42,
                           // width: 42,
@@ -458,24 +482,24 @@ export function ControlBar ({
                           sx={{
                             fontSize: {
                               xs: 'small',
-                              sm: 'medium',
-                              md: 'large',
-                              lg: 'large',
-                              xl: 'large'
+                              sm: 'small',
+                              md: 'small',
+                              lg: 'small',
+                              xl: 'small'
                             },
-                            height: {
-                              xs: '12px',
-                              sm: '24px',
-                              md: '42px',
-                              lg: '42px',
-                              xl: '42px'
+                            minHeight: {
+                              xs: '1%',
+                              sm: '1%',
+                              md: '1%',
+                              lg: '1%',
+                              xl: '1%'
                             },
-                            width: {
-                              xs: '12px',
-                              sm: '24px',
-                              md: '42px',
-                              lg: '42px',
-                              xl: '42px'
+                            minWidth: {
+                              xs: '1%',
+                              sm: '1%',
+                              md: '1%',
+                              lg: '1%',
+                              xl: '1%'
                             },
                             // height: 42,
                             // width: 42,
@@ -552,24 +576,24 @@ export function ControlBar ({
                       sx={{
                         fontSize: {
                           xs: 'small',
-                          sm: 'medium',
-                          md: 'large',
-                          lg: 'large',
-                          xl: 'large'
+                          sm: 'small',
+                          md: 'small',
+                          lg: 'small',
+                          xl: 'small'
                         },
-                        height: {
-                          xs: '12px',
-                          sm: '24px',
-                          md: '42px',
-                          lg: '42px',
-                          xl: '42px'
+                        minHeight: {
+                          xs: '1%',
+                          sm: '1%',
+                          md: '1%',
+                          lg: '1%',
+                          xl: '1%'
                         },
-                        width: {
-                          xs: '12px',
-                          sm: '24px',
-                          md: '42px',
-                          lg: '42px',
-                          xl: '42px'
+                        minWidth: {
+                          xs: '1%',
+                          sm: '1%',
+                          md: '1%',
+                          lg: '1%',
+                          xl: '1%'
                         },
                         transition: `${theme.transitions.create(['transform', 'cursor', 'backgroundColor'], { duration: theme.transitions.duration.standard })}`,
                         '&:hover': {
