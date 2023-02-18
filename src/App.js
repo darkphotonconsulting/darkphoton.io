@@ -3,6 +3,7 @@
 import './App.css'
 import React from 'react'
 // import { useSpring, animated } from 'react-spring'
+import * as Colors from '@mui/material/colors'
 import {
   MemoryRouter,
   withRouter,
@@ -34,9 +35,7 @@ import {
   Box
 } from '@mui/material'
 
-import {
-  ControlBar
-} from './components/ControlBar.jsx'
+import ControlBar from './components/ControlBar.jsx'
 
 import {
   Splash
@@ -128,22 +127,27 @@ export function App ({
   React.useLayoutEffect(() => {
     const rootWidth = rootContainerRef.current.offsetWidth
     const rootHeight = rootContainerRef.current.offsetHeight
+    // eslint-disable-next-line no-unused-vars
     const layoutWidth = layoutContainerRef.current.offsetWidth
+    // eslint-disable-next-line no-unused-vars
     const layoutHeight = layoutContainerRef.current.offsetHeight
     // const controlWidth = controlContainerRef.current.offsetWidth
     // const controlHeight = controlContainerRef.current.offsetHeight
+    // eslint-disable-next-line no-unused-vars
     const contentWidth = contentContainerRef.current.offsetWidth
+    // eslint-disable-next-line no-unused-vars
     const contentHeight = contentContainerRef.current.offsetHeight
-    console.log('content width: ', contentWidth)
-    console.log('content height: ', contentHeight)
-    console.log('layout width: ', layoutWidth)
-    console.log('layout height: ', layoutHeight)
+    // console.log('theme', theme)
+    // console.log('content width: ', contentWidth)
+    // console.log('content height: ', contentHeight)
+    // console.log('layout width: ', layoutWidth)
+    // console.log('layout height: ', layoutHeight)
     // console.log('control width: ', controlWidth)
     // console.log('control height: ', controlHeight)
-    console.log('root width: ', rootWidth)
-    console.log('root height: ', rootHeight)
-    console.log('window width: ', window.innerWidth)
-    console.log('window height: ', window.innerHeight)
+    // console.log('root width: ', rootWidth)
+    // console.log('root height: ', rootHeight)
+    // console.log('window width: ', window.innerWidth)
+    // console.log('window height: ', window.innerHeight)
     console.log('window:', window)
     setRootWidth(rootWidth)
     setRootHeight(rootHeight)
@@ -152,11 +156,10 @@ export function App ({
   return (
     <ThemeProvider
       theme={theme}
-      // enableColorScheme={true}
     >
       <CssBaseline />
       {/*
-        root div (flex container)
+        Root Container
       */}
       <Box
         ref={rootContainerRef}
@@ -164,7 +167,8 @@ export function App ({
         style={{
           display: 'flex',
           flex: '1 1 auto',
-          backgroundImage: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
+          // backgroundImage: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
+          backgroundColor: state.theme.mode === 'light' ? Colors.grey[100] : Colors.grey[900],
           backgroundSize: 'cover',
           // height: '100%',
           /*
@@ -172,8 +176,8 @@ export function App ({
           */
           paddingTop: `${rootHeight * 0.02}px`,
           paddingBottom: `${rootHeight * 0.02}px`,
-          paddingLeft: `${rootWidth * 0.02}px`,
-          paddingRight: `${rootWidth * 0.02}px`,
+          paddingLeft: `${rootWidth * 0.04}px`,
+          paddingRight: `${rootWidth * 0.04}px`,
           /*
           align items, content & justification with center
           */
@@ -191,8 +195,8 @@ export function App ({
           spacing={2}
           container
           sx={{
-            border: '1px dashed red',
-            padding: 2,
+            border: '1px dashed ' + theme.palette.primary.main,
+            padding: 0,
             margin: 0,
             order: 0,
             flexDirection: 'column',
@@ -235,43 +239,57 @@ export function App ({
                       className={'router-container'}
                       id={'app-router'}
                     >
-                      <Route
+                      {/* <Route
                         className={'route-container'}
                         id={'home-route'}
                         exact
                         path='/'
-                      >
+                      > */}
                       {
                         state.splash.hidden === false
                           ? (
-                            <Splash
-                              className={'splash-component'}
-                              id={'splash'}
-                              state={state}
-                              setState={setState}
-                              theme={theme}
-                              visible={true}
-                            />
+                            <Route
+                              className={'route-container'}
+                              id={'splash-route'}
+                              exact
+                              path='/'
+                            >
+                              <Splash
+                                className={'splash-component'}
+                                id={'splash'}
+                                state={state}
+                                setState={setState}
+                                theme={theme}
+                                visible={true}
+                              />
+                            </Route>
                             )
                           : (
-                            <Box
-                              className={'landing-component-container'}
-                              id={'landing-component-container'}
-                              sx={{
-                                padding: 5,
-                                flexGrow: 1,
-                                flexShrink: 0
-                              }}
+                            <Route
+                              className={'route-container'}
+                              id={'landing-route'}
+                              exact
+                              path='/'
                             >
-                                <Landing
-                                  className={'landing-component'}
-                                  id={'app-landing'}
-                                  theme={theme}
-                                />
-                            </Box>
+                              <Box
+                                className={'landing-component-container'}
+                                id={'landing-component-container'}
+                                sx={{
+                                  padding: 5,
+                                  flexGrow: 1,
+                                  flexShrink: 0
+                                }}
+                              >
+                                  <Landing
+                                    className={'landing-component'}
+                                    id={'app-landing'}
+                                    theme={theme}
+                                  />
+                              </Box>
+                            </Route>
                             )
                       }
-                      </Route>
+                      {/* </Route> */}
                       <Route exact path='/test'>
                         <Box>
                           <Crumb/>
@@ -285,8 +303,17 @@ export function App ({
                         </Box>
                       </Route>
                       <Route exact path='/about'>
-                        <Box>
-                          <About/>
+                        <Box
+                          sx={{
+                            padding: 5,
+                            flexGrow: 1,
+                            flexShrink: 0
+                          }}
+                        >
+                          <About
+                            config={Configuration}
+                            theme={theme}
+                          />
                         </Box>
                       </Route>
                     </Router>
@@ -298,13 +325,13 @@ export function App ({
           {/* application control */}
         </Grid>
         <ControlBar
-              state={state}
-              setState={setState}
-              theme={theme}
-              config={Configuration}
-              className="application-control-bar"
-              id={'application-control-bar'}
-            />
+          state={state}
+          setState={setState}
+          theme={theme}
+          config={Configuration}
+          className="application-control-bar"
+          id={'application-control-bar'}
+        />
       </Box>
     </ThemeProvider>
   )

@@ -17,6 +17,10 @@ import {
  * @property {Object} settings
  */
 export const Configuration = {
+  meta: {
+    person: 'Aaron Samuel',
+    company: 'Dark Photon IT Consultation, LLC.'
+  },
   title: 'Dark Photon IT, LLC.',
   subtitle: 'solutions for the stars',
   themes: [
@@ -40,27 +44,32 @@ export const Configuration = {
         {
           icon: faStarship,
           name: 'About',
-          tooltip: 'About Us'
+          tooltip: 'About Us',
+          path: '/about'
         },
         {
           icon: faFluxCapacitor,
           name: 'Services',
-          tooltip: 'Discover Services'
+          tooltip: 'Discover Services',
+          path: '/services'
         },
         {
           icon: faTwitter,
           name: 'Twitter',
-          tooltip: 'Follow us on Twitter'
+          tooltip: 'Follow us on Twitter',
+          path: 'https://twitter.com/darkphotonit'
         },
         {
           icon: faGithub,
           name: 'GitHub',
-          tooltip: 'View our code repositories'
+          tooltip: 'View our code repositories',
+          path: 'https://github.com/darkphotonconsulting'
         },
         {
           icon: faHeadSideBrain,
           name: 'Philosophy',
-          tooltip: 'Our Philosophy'
+          tooltip: 'Our Philosophy',
+          path: '/philosophy'
         }
       ]
     }

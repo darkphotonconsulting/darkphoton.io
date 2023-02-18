@@ -13,6 +13,9 @@ export const DefaultTheme = {
       contrastText: '#000'
     }
   },
+  typography: {
+    fontFamily: 'Nasalization, sans-serif'
+  },
   components: {}
 }
 
@@ -31,6 +34,9 @@ export const DarkTheme = {
       contrastText: '#000'
     }
   },
+  typography: {
+    fontFamily: 'Nasalization, sans-serif'
+  },
   components: {}
 }
 
@@ -48,6 +54,9 @@ export const LightTheme = {
       dark: '#5C2B1C',
       contrastText: '#000'
     }
+  },
+  typography: {
+    fontFamily: 'Nasalization, sans-serif'
   },
   components: {}
 }

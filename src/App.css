@@ -36,11 +36,11 @@
   color: #61dafb;
 }
 
-.control-bar {
+/* .control-bar {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-}
+} */
 
 @keyframes App-logo-spin {
   from {

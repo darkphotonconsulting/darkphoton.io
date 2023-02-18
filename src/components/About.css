@@ -1,0 +1,4 @@
+@font-face {
+    font-family: 'Nasalization';
+    src: local('Nasalization') url('./nasalization_regular.otf') format('opentype') tech(variations);
+}

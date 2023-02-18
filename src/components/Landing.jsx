@@ -175,11 +175,11 @@ function Title ({
             fontWeight: 'bold',
             color: `${color}`,
             fontSize: {
-              xs: '10vh',
-              sm: '10vh',
-              md: '10vh',
-              lg: '10vh',
-              xl: '10vh'
+              xs: '1em',
+              sm: '1em',
+              md: '1em',
+              lg: '1em',
+              xl: '1em'
             }
           }}
         >
@@ -247,11 +247,11 @@ function Subtitle ({
           className={'landing-subtitle'}
           sx={{
             fontSize: {
-              xs: '1vh',
-              sm: '1vh',
-              md: '1vh',
-              lg: '1vh',
-              xl: '1vh'
+              xs: '.8em',
+              sm: '.8em',
+              md: '.8em',
+              lg: '.8em',
+              xl: '.8em'
             },
             fontWeight: 'bold',
             color: `${color}`
@@ -299,14 +299,14 @@ function Section ({
   return (
     <Box
       sx={{
-        padding: 5,
-        width: {
-          xs: '100%',
-          sm: '100%',
-          md: '100%',
-          lg: '50%',
-          xl: '50%'
-        },
+        padding: 2,
+        // width: {
+        //   xs: '100%',
+        //   sm: '100%',
+        //   md: '100%',
+        //   lg: '50%',
+        //   xl: '50%'
+        // },
         alignContent: 'center',
         justifyContent: 'center',
         flexGrow: precedence,
@@ -324,6 +324,8 @@ function Section ({
           direction='column'
           spacing={0}
           sx={{
+            // border: '1px solid green',
+            // boxShadow: '15px',
             flexGrow: landingSections.length,
             flexShrink: landingSections.length
           }}
@@ -340,25 +342,35 @@ function Section ({
             {/* title */}
             <Box
               sx={{
-                display: 'flex',
+                padding: 2,
                 width: '50%',
                 backgroundColor: theme.palette.primary.main,
+                justifyContent: 'flex-start',
+                alignItems: 'baseline',
+                alignContent: 'center',
                 textAlign: 'center',
-                justifyContent: 'center',
-                alignItems: 'center',
-                alignContent: 'center'
+                verticalAlign: 'middle',
+                flex: '1 1 auto',
+                flexWrap: 'nowrap'
               }}
             >
               <Typography
                 component={'div'}
                 sx={{
+                  // justifySelf: 'baseline',
+                  flex: '1 1 auto',
+                  justifyContent: 'flex-start',
+                  alignItems: 'baseline',
+                  alignContent: 'center',
+                  textAlign: 'center',
+                  verticalAlign: 'middle',
                   fontWeight: 'bold',
                   fontSize: {
-                    xs: '.35rem',
-                    sm: '.55rem',
+                    xs: '.65rem',
+                    sm: '.75rem',
                     md: '.75rem',
-                    lg: '.95rem',
-                    xl: '1.15rem'
+                    lg: '1rem',
+                    xl: '1rem'
                   }
                 }}
               >{title}
@@ -377,23 +389,49 @@ function Section ({
               direction='row'
               sx={{
                 width: '50%',
-                alignContent: 'flex-start',
-                alignItems: 'flex-start',
+                alignContent: 'center',
+                alignItems: 'baseline',
                 justifyContent: 'flex-start',
                 backgroundColor: theme.palette.primary.main,
                 textAlign: 'center',
-                verticalAlign: 'middle'
+                verticalAlign: 'middle',
+                flexWrap: 'nowrap',
+                flex: '1 1 auto'
               }}
             >
               {/* tier menu */}
               <Box
                 sx={{
+                  padding: 1
                 }}
               >
                 <Tooltip
-                  title={'Select a plan'}
+                  title={'Select your plan'}
                 >
                   <IconButton
+                    sx={{
+                      fontSize: {
+                        xs: 'calc(.5rem + .333vw)',
+                        sm: 'calc(.5rem + .333vw)',
+                        md: 'calc(.5rem + .5vw)',
+                        lg: 'calc(.5rem + 1vw)',
+                        xl: 'calc(.5rem + 1vw)'
+                      },
+                      minHeight: {
+                        xs: '1vh',
+                        sm: '1vh',
+                        md: '1vh',
+                        lg: '1vh',
+                        xl: '1vh'
+                      },
+                      minWidth: {
+                        xs: '1vw',
+                        sm: '1vw',
+                        md: '1vw',
+                        lg: '1vw',
+                        xl: '1vw'
+                      }
+                    }}
                     id={`${title.toLowerCase().replaceAll(' ', '')}-tier-menu-button`}
                     aria-controls={tierMenuActive ? `${title.toLowerCase().replaceAll(' ', '')}-tier-menu` : undefined}
                     aria-haspopup={'true'}
@@ -445,6 +483,8 @@ function Section ({
                   })
                   }
                 </Menu>
+              </Box>
+              <Box>
                 <Tooltip
                   title={tier}
                 >
@@ -458,7 +498,31 @@ function Section ({
                 <Tooltip
                   title={'More information'}
                 >
-                  <IconButton>
+                  <IconButton
+                    sx={{
+                      fontSize: {
+                        xs: 'calc(.5rem + .333vw)',
+                        sm: 'calc(.5rem + .333vw)',
+                        md: 'calc(.5rem + .5vw)',
+                        lg: 'calc(.5rem + 1vw)',
+                        xl: 'calc(.5rem + 1vw)'
+                      },
+                      minHeight: {
+                        xs: '1vh',
+                        sm: '1vh',
+                        md: '1vh',
+                        lg: '1vh',
+                        xl: '1vh'
+                      },
+                      minWidth: {
+                        xs: '1vw',
+                        sm: '1vw',
+                        md: '1vw',
+                        lg: '1vw',
+                        xl: '1vw'
+                      }
+                    }}
+                  >
                     <FontAwesomeIcon icon={faInfoCircle} />
                   </IconButton>
                 </Tooltip>
@@ -474,7 +538,31 @@ function Section ({
                     <Tooltip
                       title={'View roadmap'}
                     >
-                      <IconButton>
+                      <IconButton
+                        sx={{
+                          fontSize: {
+                            xs: 'calc(.5rem + .333vw)',
+                            sm: 'calc(.5rem + .333vw)',
+                            md: 'calc(.5rem + .5vw)',
+                            lg: 'calc(.5rem + 1vw)',
+                            xl: 'calc(.5rem + 1vw)'
+                          },
+                          minHeight: {
+                            xs: '1vh',
+                            sm: '1vh',
+                            md: '1vh',
+                            lg: '1vh',
+                            xl: '1vh'
+                          },
+                          minWidth: {
+                            xs: '1vw',
+                            sm: '1vw',
+                            md: '1vw',
+                            lg: '1vw',
+                            xl: '1vw'
+                          }
+                        }}
+                      >
                         <FontAwesomeIcon icon={faRoad} />
                       </IconButton>
                     </Tooltip>
@@ -484,7 +572,31 @@ function Section ({
                     <Tooltip
                       title={'Sign up now!'}
                     >
-                      <IconButton>
+                      <IconButton
+                        sx={{
+                          fontSize: {
+                            xs: 'calc(.5rem + .333vw)',
+                            sm: 'calc(.5rem + .333vw)',
+                            md: 'calc(.5rem + .5vw)',
+                            lg: 'calc(.5rem + 1vw)',
+                            xl: 'calc(.5rem + 1vw)'
+                          },
+                          minHeight: {
+                            xs: '1vh',
+                            sm: '1vh',
+                            md: '1vh',
+                            lg: '1vh',
+                            xl: '1vh'
+                          },
+                          minWidth: {
+                            xs: '1vw',
+                            sm: '1vw',
+                            md: '1vw',
+                            lg: '1vw',
+                            xl: '1vw'
+                          }
+                        }}
+                      >
                         <FontAwesomeIcon icon={faMapLocationDot} />
                       </IconButton>
                     </Tooltip>
@@ -529,8 +641,8 @@ function Section ({
               <Typography
                 sx={{
                   fontSize: {
-                    xs: '.15rem',
-                    sm: '.25rem',
+                    xs: '.45rem',
+                    sm: '.45rem',
                     md: '.55rem',
                     lg: '.75rem',
                     xl: '.85rem'
@@ -711,6 +823,7 @@ function Landing ({ theme, ...props }) {
   const location = useLocation()
   // eslint-disable-next-line no-unused-vars
   const history = useHistory()
+  // console.log('landingTheme', theme)
   return (
     <ThemeProvider theme={{ ...theme, ...localTheme }}>
       <MemoryRouter
@@ -735,7 +848,7 @@ function Landing ({ theme, ...props }) {
               <Title
                 id={'landing-title-component'}
                 className={'landing-title-component'}
-                color={'#12B70FAB'}
+                color={theme.palette.primary.main}
                 theme={{ ...theme, ...localTheme }}
               />
             </Box>
@@ -744,7 +857,7 @@ function Landing ({ theme, ...props }) {
               <Subtitle
                 id={'landing-subtitle-component'}
                 className={'landing-subtitle-component'}
-                color={'#FFFFFF'}
+                color={theme.palette.secondary.main}
                 theme={theme}
               />
             </Box>
@@ -756,18 +869,18 @@ function Landing ({ theme, ...props }) {
             sx={{
               display: 'flex',
               gap: {
-                xs: '5px',
-                sm: '5px',
+                xs: '3px',
+                sm: '3px',
                 md: '5px',
-                lg: '5px',
-                xl: '5px'
+                lg: '7px',
+                xl: '7px'
               },
               rowGap: {
-                xs: '5px',
-                sm: '5px',
+                xs: '3px',
+                sm: '3px',
                 md: '5px',
-                lg: '5px',
-                xl: '5px'
+                lg: '7px',
+                xl: '7px'
               },
               columnGap: {
                 xs: '5px',
@@ -784,7 +897,8 @@ function Landing ({ theme, ...props }) {
               // alignContent={'center'}
               // justifyContent={'center'}
               sx={{
-                border: '1px solid white'
+                // border: '1px solid white'
+                border: '1px dashed ' + theme.palette.primary.main
               }}
             >
               <Sections
