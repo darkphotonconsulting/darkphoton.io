@@ -4,6 +4,7 @@ import PropTypes from 'prop-types'
 // eslint-disable-next-line no-unused-vars
 import { Node } from '../../src/lib/Node.js'
 import { LoremIpsum } from 'lorem-ipsum'
+// import * as Colors from '@mui/material/colors'
 import {
   useLocation,
   useHistory,
@@ -19,14 +20,20 @@ import {
   Typography
 } from '@mui/material'
 
+import ParentSize from '@visx/responsive/lib/components/ParentSize'
 import {
   scaleLog
 } from '@visx/scale'
 
-// import {
-//   Masonry
-// } from '@mui/lab'
-// import { Configuration } from '../config/Configuration.js'
+import {
+  // eslint-disable-next-line no-unused-vars
+  Text
+} from '@visx/text'
+
+// eslint-disable-next-line no-unused-vars
+import WordCloud from '@visx/wordcloud/lib/Wordcloud'
+
+import GoogleMapReact from 'google-map-react'
 
 const lorem = new LoremIpsum({
   sentencesPerParagraph: {
@@ -41,8 +48,66 @@ const lorem = new LoremIpsum({
 // eslint-disable-next-line no-unused-vars
 const loremText = lorem.generateParagraphs(1)
 
-function WordCloud ({
-  text = 'testing 123'
+function GoogleMap ({
+  center = {
+    lat: 40.7128,
+    lng: -74.0060
+  },
+  zoom = 5,
+  ...props
+}) {
+  const [apiKey, setApiKey] = React.useState(null)
+  React.useEffect(() => {
+    const fetchApiKey = async () => {
+      fetch(
+        'http://localhost:3001/env/google_maps_key',
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json'
+          }
+        }
+      )
+        .then((res) => {
+          const json = res.json()
+          return json
+        })
+        .then((json) => {
+          setApiKey(json)
+        })
+    }
+
+    if (!apiKey) {
+      fetchApiKey()
+    }
+  })
+  if (!apiKey) {
+    return (<Box>location</Box>)
+  } else {
+    return (
+      <GoogleMapReact
+        bootstrapURLKeys={{
+          key: apiKey,
+          language: 'en'
+        }}
+        defaultCenter={center}
+        defaultZoom={zoom}
+      >
+      </GoogleMapReact>
+    )
+  }
+}
+
+GoogleMap.propTypes = {
+  center: PropTypes.object,
+  zoom: PropTypes.number
+}
+function CompanyWords ({
+  text = 'testing 123',
+  colors = [
+    '#143059', '#2F6B9A', '#82a6c2'
+  ],
+  theme = {}
 }) {
   const curatedWords = [
     'Engineering',
@@ -50,8 +115,13 @@ function WordCloud ({
     'Software',
     'People'
   ]
+  const excludedWords = [
+    'The',
+    'And',
+    '&'
+  ]
   const getWordData = (text) => {
-    const words = text.replace(/\./g, '').split(/\s/)
+    const words = text.replace(/\./g, '').split(/\n/)
     const frequencyMap = {}
     const lengthMap = {}
     for (const word of words) {
@@ -69,10 +139,13 @@ function WordCloud ({
         text: word,
         frequency: frequencyMap[word],
         length: lengthMap[word],
-        curated: curatedWords.map(word => word.toLowerCase()).includes(word.toLowerCase())
+        curated: curatedWords.map(w => w.toLowerCase()).includes(word.toLowerCase()),
+        excluded: excludedWords.map(w => w.toLowerCase()).includes(word.toLowerCase())
       }
     })
   }
+  const words = getWordData(text)
+
   // eslint-disable-next-line no-unused-vars
   const getWordRotation = () => {
     const random = Math.random()
@@ -87,28 +160,83 @@ function WordCloud ({
         Math.min(...words.map((d) => d.length)),
         Math.max(...words.map((d) => d.length))
       ],
-      range: [10, 100]
+      range: [15, 35]
     })
   }
 
   // eslint-disable-next-line no-unused-vars
   const setFontSize = (word) => {
-    return getFontScale(word)
+    // this should account for the size of the word as well as size of the container
+    return getFontScale(words)(word.length)
   }
 
-  const words = getWordData(text)
   return (
-    <Box>
-      <Typography
+    <Box
+      className={'word-cloud'}
+      sx={{
+        height: '85%',
+        backgroundColor: theme.palette.background.paper,
+        // border: '1px solid black',
+        borderRadius: '10%'
+      }}
+    >
+      <ParentSize
+        debounceTime={5}
+      >
+        {
+          ({ width: visWidth, height: visHeight }) => {
+            const maxHeight = 500
+            return (
+                <WordCloud
+                  width={
+                    visWidth
+                  }
+                  height={
+                    Math.min(visHeight, maxHeight)
+                  }
+                  words={words}
+                  fontSize={setFontSize}
+                  padding={10}
+                  spiral={'archimedean'}
+                  rotate={getWordRotation}
+                  random={() => 0.5}
+              >
+                {
+                  (cloud) =>
+                    cloud.map((word, i) => {
+                      return (
+                        <Text
+                          key={`word-cloud-${i}`}
+                          fill={colors[i % colors.length]}
+                          textAnchor={'middle'}
+                          transform={ `translate(${word.x}, ${word.y}) rotate(${word.rotate})` }
+                          fontSize={word.fontSize}
+                          fontFamily={word.font}
+                          fontWeight={ i % 2 === 0 ? 'bold' : 'normal' }
+                        >
+                          {word.text}
+                        </Text>
+                      )
+                    })
+                }
+              </WordCloud>
+            )
+          }
+        }
+      </ParentSize>
+      {/* <Typography
       >{JSON.stringify(words)}
-      </Typography>
+      </Typography> */}
     </Box>
   )
 }
 
-WordCloud.propTypes = {
-  text: PropTypes.string
+CompanyWords.propTypes = {
+  text: PropTypes.string,
+  colors: PropTypes.array,
+  theme: PropTypes.object
 }
+
 function About ({
   state = {},
   setState = () => {},
@@ -124,7 +252,7 @@ function About ({
   const [company, setCompany] = React.useState([])
   const [serviceLabels, setServiceLabels] = React.useState([])
   // eslint-disable-next-line no-unused-vars
-  const [tierLabels, setTierlabels] = React.useState([])
+  const [featureLabels, setFeatureLabels] = React.useState([])
   React.useEffect(() => {
     const fetchAbout = async () => {
       fetch(
@@ -179,15 +307,22 @@ function About ({
         })
         .then((json) => {
           if (serviceLabels.length === 0) {
-            console.log(json)
             const serviceNames = json.map((s) => s.data.name)
             setServiceLabels((serviceLabels) => [...serviceNames])
-            const tierNames = json.map((s) =>
-              s.data.tiers.map((t) =>
-                t.features.map((f) => f.name)
-              )
-            )
-            setTierlabels((tierLabels) => tierNames)
+            const tiers = []
+            for (const service of json) {
+              // tiers.push(service.data.tiers)
+              for (const tier of service.data.tiers) {
+                tiers.push(tier)
+              }
+            }
+            const features = []
+            for (const tier of tiers) {
+              for (const feature of tier.features) {
+                features.push(feature.name)
+              }
+            }
+            setFeatureLabels((featureLabels) => Array.from(new Set(features)))
           }
         })
     }
@@ -199,12 +334,9 @@ function About ({
     if (Object.keys(about).length === 0) {
       fetchAbout()
     }
-    // if (company)
-    // fetchAbout()
     if (company.length === 0) {
       fetchCompany()
     }
-    // fetchCompany()
   }, [])
 
   // eslint-disable-next-line no-unused-vars
@@ -212,59 +344,157 @@ function About ({
   // eslint-disable-next-line no-unused-vars
   const history = useHistory()
   return (
-    <MemoryRouter>
+    <MemoryRouter
+      initialEntries={['/about']}
+    >
       <Stack
-        // columns={{ xs: 1, sm: 2, md: 2, lg: 2, xl: 2 }}
-        direction='row'
-        spacing={2}
+        direction={{
+          xs: 'column',
+          sm: 'column',
+          md: 'row',
+          lg: 'row',
+          xl: 'row'
+        }}
+        spacing={{
+          xs: 0,
+          sm: 2,
+          md: 4,
+          lg: 6,
+          xl: 8
+        }}
         sx={{
-          height: '100%',
-          border: '1px solid #000'
+          flex: '1 1 auto',
+          overflow: {
+            xs: 'hidden',
+            sm: 'hidden',
+            md: 'hidden',
+            lg: 'hidden',
+            xl: 'hidden'
+          },
+          height: {
+            xs: '100%',
+            sm: '100%',
+            md: '100%',
+            lg: '100%',
+            xl: '100%'
+          },
+          width: {
+            xs: '100%',
+            sm: '100%',
+            md: '100%',
+            lg: '100%',
+            xl: '100%'
+          },
+          padding: {
+            xs: 1,
+            sm: 1,
+            md: 1,
+            lg: 2,
+            xl: 3
+          }
         }}
       >
-        <Paper
+        <Stack
+            spacing={5}
             sx={{
               // flex: '1 1 auto',
-              // border: '1px solid ',
+              backgroundColor: theme.palette.primary.main,
               padding: 5,
-              // height: '35vh',
-              width: '100%'
+              width: {
+                xs: '75%',
+                sm: '75%',
+                md: '75%',
+                lg: '50%',
+                xl: '50%'
+              },
+              '&:hover': {
+                backgroundColor: theme.palette.secondary.main
+              }
             }}
           >
-            <Box>
-              <Typography
+              <Box
                 sx={{
-                  fontSize: {
-                    xs: 'calc(.5rem + .333vw)',
-                    sm: 'calc(.5rem + .333vw)',
-                    md: 'calc(.5rem + .5vw)',
-                    lg: 'calc(.5rem + 1vw)',
-                    xl: 'calc(.5rem + 1vw)'
-                  }
+                  flex: '1 1 auto'
+                  // border: '1px solid black'
                 }}
-              >{(company && company.name) ? company.name : 'not ready'}</Typography>
-            </Box>
-            <Box>
-              <WordCloud text={loremText}/>
-            </Box>
-        </Paper>
+              >
+                <Typography
+                  sx={{
+                    fontSize: {
+                      xs: 'calc(.5rem + .333vw)',
+                      sm: 'calc(.5rem + .333vw)',
+                      md: 'calc(.5rem + .5vw)',
+                      lg: 'calc(.5rem + .75vw)',
+                      xl: 'calc(.5rem + .75vw)'
+                    }
+                  }}
+                >{(company && company.name) ? company.name : 'not ready'}</Typography>
+              </Box>
+              <CompanyWords
+                  theme={theme}
+                  text={
+                    featureLabels.length
+                      ? featureLabels.join('\n')
+                      : 'blah'
+                  }
+              />
+              <Box
+                sx={{
+                  flex: '1 1 auto',
+                  width: '100%',
+                  height: 500,
+                  border: '1px solid black',
+                  padding: 5
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: {
+                      xs: 'calc(.5rem + .333vw)',
+                      sm: 'calc(.5rem + .333vw)',
+                      md: 'calc(.5rem + .5vw)',
+                      lg: 'calc(.5rem + .75vw)',
+                      xl: 'calc(.5rem + .75vw)'
+                    }
+                  }}
+                ></Typography>
+                <GoogleMap/>
+              </Box>
+            {/* <GoogleMapReact
+              bootstrapURLKeys={{
+                key: process.env.GOOGLE_MAPS_KEY
+              }}
+
+            /> */}
+        </Stack>
         <Paper
             sx={{
-              // flex: '1 1 auto',
+              backgroundColor: theme.palette.primary.main,
               padding: 5,
-              // height: '35vh',
-              width: '100%'
+              width: {
+                xs: '100%',
+                sm: '100%',
+                md: '50%',
+                lg: '50%',
+                xl: '50%'
+              },
+              '&:hover': {
+                backgroundColor: theme.palette.secondary.main
+              }
             }}
           >
-            <Box>
+            <Box
+              sx={{
+                flex: '1 1 auto'
+              }}
+            >
               <Typography
                 sx={{
                   fontSize: {
-                    xs: 'calc(.5rem + .333vw)',
-                    sm: 'calc(.5rem + .333vw)',
-                    md: 'calc(.5rem + .5vw)',
-                    lg: 'calc(.5rem + 1vw)',
-                    xl: 'calc(.5rem + 1vw)'
+                    xs: 'calc(.1rem + 25%)',
+                    md: 'calc(.2rem + 30%)',
+                    lg: 'calc(.3rem + 35%)',
+                    xl: 'calc(.4rem + 45%)'
                   }
                 }}
               >{(company && company.about) ? company.about.join(' ') : 'not ready'}</Typography>

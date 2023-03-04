@@ -76,9 +76,6 @@ function ControlBar ({
   React.useLayoutEffect(() => {
     setWidth(appBarRef.current.offsetWidth)
     setHeight(appBarRef.current.offsetHeight)
-    // console.log('controlBarTheme', theme)
-    // console.log('history', history)
-    // console.log('location', location)
   })
 
   React.useEffect(() => {

@@ -284,11 +284,9 @@ function Section ({
   const [tier, setTier] = React.useState('Basic')
   const [tierMenuActive, setTierMenuActive] = React.useState(false)
   const tierMenuRef = React.useRef(null)
-  // console.log(theme)
 
   /* govern tier selection */
   const handleTier = (event, index) => {
-    // console.log('handling-tier', { event, index })
     setTier(tiers[index].name)
   }
 
@@ -823,7 +821,6 @@ function Landing ({ theme, ...props }) {
   const location = useLocation()
   // eslint-disable-next-line no-unused-vars
   const history = useHistory()
-  // console.log('landingTheme', theme)
   return (
     <ThemeProvider theme={{ ...theme, ...localTheme }}>
       <MemoryRouter

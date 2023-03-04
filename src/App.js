@@ -117,7 +117,6 @@ export function App ({
   )
 
   theme.palette.mode = state?.theme?.mode
-  // console.log('theme: ', theme.palette.mode, theme)
   const rootContainerRef = React.useRef(null)
 
   const layoutContainerRef = React.useRef(null)
@@ -137,18 +136,6 @@ export function App ({
     const contentWidth = contentContainerRef.current.offsetWidth
     // eslint-disable-next-line no-unused-vars
     const contentHeight = contentContainerRef.current.offsetHeight
-    // console.log('theme', theme)
-    // console.log('content width: ', contentWidth)
-    // console.log('content height: ', contentHeight)
-    // console.log('layout width: ', layoutWidth)
-    // console.log('layout height: ', layoutHeight)
-    // console.log('control width: ', controlWidth)
-    // console.log('control height: ', controlHeight)
-    // console.log('root width: ', rootWidth)
-    // console.log('root height: ', rootHeight)
-    // console.log('window width: ', window.innerWidth)
-    // console.log('window height: ', window.innerHeight)
-    console.log('window:', window)
     setRootWidth(rootWidth)
     setRootHeight(rootHeight)
   }, [rootContainerRef.current])
@@ -307,7 +294,8 @@ export function App ({
                           sx={{
                             padding: 5,
                             flexGrow: 1,
-                            flexShrink: 0
+                            flexShrink: 0,
+                            flex: '1 1 auto'
                           }}
                         >
                           <About
