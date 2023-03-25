@@ -727,6 +727,13 @@ const jovianShader = {
       );
     }
 
+    vec3 hsl2rgb(vec3 hsl) {
+      vec3 rgb = clamp(abs(mod(hsl.x * 6.0 + vec3(0.0, 4.0, 2.0), 6.0) - 3.0) - 1.0, 0.0, 1.0);
+      rgb = mix(vec3(1.0), rgb, hsl.y);
+      rgb = mix(vec3(0.5), rgb, hsl.z);
+      return rgb;
+    }
+
     void main() {
       vec2 p = gl_FragCoord.xy / resolution.xy;
       p.y *= resolution.y / resolution.x;
@@ -751,8 +758,8 @@ const jovianShader = {
       float mnoise = mixedNoise(
         // vPosition
         vec3(
-          cos(vUv.x * 3.1415),
-          sin(vUv.y * 3.1415),
+          vUv.x,
+          vUv.y,
           1.0
         )
       );
@@ -762,8 +769,8 @@ const jovianShader = {
         abs(
           mixedNoise(
             vec3(
-              cos(vUv.x * (3.1415 * 2.)),
-              tan(vUv.y * (3.1415 * 2.)) ,
+              abs(cos(vUv.x)),
+              abs(sin(vUv.y)) ,
               1.
             )
           )
@@ -771,17 +778,22 @@ const jovianShader = {
         abs(
           mixedNoise(
             vec3(
-              cos(vUv.x * (3.1415 * 3.)),
-              tan(vUv.y * (3.1415 * 3.)),
+              cos(vUv.x * (3.1415)),
+              sin(vUv.y * 0.1),
               1.
             )
           )
         ) * 0.6666;
+      vec3 ncolor = mix(
+        color,
+        vec3(0.6, 0.3, 0.),
+        turbulence
+      );
       // vec3 noise = vec3(ridged);
       gl_FragColor = vec4(
-        vec3(
-          turbulence
-        ), 1.
+        // ncolor,
+        ncolor,
+        1.5
       );
     }
   `
