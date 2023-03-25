@@ -96,6 +96,34 @@ export function App ({
         major: [1, 5],
         minor: [1, 5],
         radius: [1, 5]
+      },
+      scene: {
+        stars: {
+          visible: true
+        },
+        tech: {
+          visible: true
+        },
+        planets: {
+          visible: true,
+          orbit: {
+            animate: true
+            // factor: 125.5
+          }
+        }
+      },
+      composer: {
+        bloom: {
+          // mipmapBlur: true,
+          // luminanceThreshold: 0.01,
+          // radius: 0.2,
+          // levels: 5,
+          // blendFunction: BlendFunction.MULTIPLY
+          enabled: true
+        },
+        depth: {
+          enabled: true
+        }
       }
     }
   })
@@ -161,8 +189,8 @@ export function App ({
           /*
           padding is configured as a percentage of the root container's width and height
           */
-          paddingTop: `${rootHeight * 0.02}px`,
-          paddingBottom: `${rootHeight * 0.02}px`,
+          paddingTop: `${rootHeight * 0.04}px`,
+          paddingBottom: `${rootHeight * 0.04}px`,
           paddingLeft: `${rootWidth * 0.04}px`,
           paddingRight: `${rootWidth * 0.04}px`,
           /*
@@ -179,10 +207,10 @@ export function App ({
         <Grid
           ref={layoutContainerRef}
           id={'layout-container'}
-          spacing={2}
+          spacing={5}
           container
           sx={{
-            border: '1px dashed ' + theme.palette.primary.main,
+            // border: '1px dashed ' + theme.palette.primary.main,
             padding: 0,
             margin: 0,
             order: 0,
