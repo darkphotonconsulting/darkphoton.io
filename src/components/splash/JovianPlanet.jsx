@@ -46,6 +46,7 @@ function JovianPlanet ({
   useFrame((state) => {
     // console.log(gl)
     const time = state.clock.getElapsedTime() / 55
+    materialRef.current.uniforms.color.value = new THREE.Color(color)
     materialRef.current.uniforms.time.value += time
     materialRef.current.uniforms.speed.value = 0.001
     materialRef.current.uniforms.density.value = 0.003

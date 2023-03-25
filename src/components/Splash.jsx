@@ -224,7 +224,7 @@ export function Splash ({
           radius={10}
           visible={state.splash.scene.planets.visible}
           resolution={new THREE.Vector2(window.innerWidth, window.innerHeight)}
-          color={new THREE.Color(1, 2, 3)}
+          color={'#632864'}
         />
 
         <DysonSphere
