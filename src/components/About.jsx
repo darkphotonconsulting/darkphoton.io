@@ -176,7 +176,6 @@ function CompanyWords ({
       sx={{
         height: '85%',
         backgroundColor: theme.palette.background.paper,
-        // border: '1px solid black',
         borderRadius: '10%'
       }}
     >
@@ -311,7 +310,6 @@ function About ({
             setServiceLabels((serviceLabels) => [...serviceNames])
             const tiers = []
             for (const service of json) {
-              // tiers.push(service.data.tiers)
               for (const tier of service.data.tiers) {
                 tiers.push(tier)
               }
@@ -428,7 +426,7 @@ function About ({
                       xl: 'calc(.5rem + .75vw)'
                     }
                   }}
-                >{(company && company.name) ? company.name : 'not ready'}</Typography>
+                >{(company && company.name) ? 'Service Cloud' : 'not ready'}</Typography>
               </Box>
               <CompanyWords
                   theme={theme}
@@ -442,9 +440,9 @@ function About ({
                 sx={{
                   flex: '1 1 auto',
                   width: '100%',
-                  height: 500,
-                  border: '1px solid black',
-                  padding: 5
+                  height: '50vh'
+                  // border: '1px solid black',
+                  // padding: 5
                 }}
               >
                 <Typography
@@ -460,12 +458,6 @@ function About ({
                 ></Typography>
                 <GoogleMap/>
               </Box>
-            {/* <GoogleMapReact
-              bootstrapURLKeys={{
-                key: process.env.GOOGLE_MAPS_KEY
-              }}
-
-            /> */}
         </Stack>
         <Paper
             sx={{
@@ -485,7 +477,8 @@ function About ({
           >
             <Box
               sx={{
-                flex: '1 1 auto'
+                flex: '1 1 auto',
+                backgroundColor: theme.palette.primary.main
               }}
             >
               <Typography
@@ -501,18 +494,6 @@ function About ({
             </Box>
         </Paper>
       </Stack>
-      {/* <Stack
-        direction='row'
-        spacing={2}
-        sx={{
-          width: '100%',
-          height: '100%',
-          flexWrap: 'nowrap'
-          // alignItems: 'center',
-          // flex: '1 1 auto'
-        }}
-      >
-      </Stack> */}
     </MemoryRouter>
   )
 }

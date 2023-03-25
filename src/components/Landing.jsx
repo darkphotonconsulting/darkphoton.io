@@ -162,7 +162,9 @@ function Title ({
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        alignContent: 'center'
+        alignContent: 'center',
+        backgroundColor: 'white',
+        borderRadius: '25% 50% 25% 50%'
       }}
     >
       <animated.div
@@ -235,7 +237,9 @@ function Subtitle ({
         alignContent: 'center',
         textAlign: 'center',
         flexGrow: 5,
-        flexShrink: 5
+        flexShrink: 5,
+        backgroundColor: 'white',
+        borderRadius: '25% 50% 25% 50%'
       }}
     >
       <animated.div
@@ -309,6 +313,7 @@ function Section ({
         justifyContent: 'center',
         flexGrow: precedence,
         order: precedence
+        // backgroundColor: 'white'
       }}
     >
       <Paper
@@ -824,13 +829,13 @@ function Landing ({ theme, ...props }) {
   return (
     <ThemeProvider theme={{ ...theme, ...localTheme }}>
       <MemoryRouter
-        initialEntries={['/']}
+        initialEntries={['/landing']}
         initialIndex={0}
         id={'landing-router'}
         className={'memory-router'}
       >
         <Stack
-          spacing={2}
+          spacing={5}
           ref={containerRef}
           direction={'column'}
           id={'landing-grid'}
