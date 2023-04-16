@@ -102,13 +102,16 @@ export function App ({
           visible: true
         },
         tech: {
-          visible: true
+          visible: false
         },
         planets: {
           visible: true,
           orbit: {
             animate: true
             // factor: 125.5
+          },
+          rotation: {
+            animate: true
           }
         }
       },
