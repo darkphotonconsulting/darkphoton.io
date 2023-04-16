@@ -5,19 +5,20 @@ import * as THREE from 'three'
 
 import {
   extend,
-  useFrame
-  // useThree
+  useFrame,
+  useThree
 } from '@react-three/fiber'
 
 import {
   shaderMaterial
   // CubeCamera
 } from '@react-three/drei'
-import { terrestrialShader } from './shaders/PlanetMaterials.js'
+import { exoPlanetShader } from './shaders/PlanetMaterials.js'
+// import { BufferGeometryUtils } from 'three/'
 
-function TerrestrialPlanet ({
+function ExoPlanet ({
   // position = [0, 0, 0],
-  name = 'Terra Pretta',
+  name = 'Damascus A',
   setState = () => { return null },
   appState = {},
   rotation = [0, 0, 0],
@@ -25,31 +26,28 @@ function TerrestrialPlanet ({
   orbitalRotation = true,
   orbitalDistance = 150,
   orbitalSpeedFactor = 125,
-  jovian = false,
-  ringed = false,
-  atmosphereColor = new THREE.Color(1, 1, 1),
-  landColor = '#540E06',
-  waterColor = '#1A4564',
-  color = new THREE.Color(1, 1, 1),
+  bandScale = 3,
+  seedValue = 35.7,
+  hasRings = false,
+  hasMoons = false,
   radius = 1,
-  sections = 64,
+  sections = 128,
   visible = true,
   scale = 1,
   ...props
 }) {
   const position = [0, 0, 0]
+  const {
+    // eslint-disable-next-line no-unused-vars
+    // scene,
+    // eslint-disable-next-line no-unused-vars
+    gl
+  } = useThree()
   useFrame((state) => {
-    const time = state.clock.getElapsedTime() / 55
-    materialRef.current.uniforms.time.value = time
-    materialRef.current.uniforms.speed.value = 0.001
-    materialRef.current.uniforms.density.value = 0.003
-    materialRef.current.uniforms.strength.value = 0.01
-    materialRef.current.uniforms.distortionSpeed = 0.001
-    materialRef.current.uniforms.distortionStrength.value = 0.01
-    materialRef.current.uniforms.distortionFrequency.value = 0.05
-    materialRef.current.uniforms.distortionAmplitude.value += 0.07
-    materialRef.current.uniforms.landColor.value = new THREE.Color(landColor)
-    materialRef.current.uniforms.waterColor.value = new THREE.Color(waterColor)
+    const time = 1.2 + (state.clock.getElapsedTime())
+    materialRef.current.uniforms.time.value += time
+    materialRef.current.uniforms.resolution.value = new THREE.Vector2(window.innerWidth, window.innerHeight)
+
     if (appState.splash.scene.planets.orbit.animate) {
       const x = orbitalDistance * Math.sin(time * orbitalSpeedFactor)
       const z = orbitalDistance * Math.cos(time * orbitalSpeedFactor)
@@ -64,15 +62,22 @@ function TerrestrialPlanet ({
   const meshRef = React.useRef(null)
   const materialRef = React.useRef(null)
   const geom = new THREE.SphereGeometry(radius, sections, sections)
-  const LandMaterial = shaderMaterial(
-    terrestrialShader.uniforms,
-    terrestrialShader.vertexShader,
-    terrestrialShader.fragmentShader
+  // geom.deleteAttribute('normal')
+  // geom.deleteAttribute('uv')
+  // geom = THREE.BufferGeometryUtils.mergeVertices(geom)
+  geom.computeVertexNormals()
+  geom.computeTangents()
+
+  // eslint-disable-next-line no-unused-vars
+  const ExoPlanetMaterial = shaderMaterial(
+    exoPlanetShader.uniforms,
+    exoPlanetShader.vertexShader,
+    exoPlanetShader.fragmentShader
   )
-  extend({ LandMaterial })
+  extend({ ExoPlanetMaterial })
   return (
     <group
-      name={`planet-group-${name.replaceAll(/\s+/g, '').toLowerCase()}`}
+      name={'splash-exo-planet'}
       ref={groupRef}
       dispose={null}
       visible={visible}
@@ -80,7 +85,6 @@ function TerrestrialPlanet ({
       rotation={rotation}
     >
       <mesh
-        name={`planet-mesh-${name.replaceAll(/\s+/g, '').toLowerCase()}`}
         castShadow
         receiveShadow
         ref={meshRef}
@@ -89,21 +93,25 @@ function TerrestrialPlanet ({
         position={position}
         rotation={rotation}
       >
-        <landMaterial
-          name={`planet-material-${name.replaceAll(/\s+/g, '').toLowerCase()}`}
+        <exoPlanetMaterial
+          attach={'material'}
           ref={materialRef}
-          attach='material'
+          mode={'multiply'}
+          alpha={0.1}
           side={THREE.DoubleSide}
-          color={landColor}
+          emissiveIntensity={0.1}
+          bandScale={bandScale}
+          seedValue={seedValue}
+          hasRings={hasRings}
+          hasMoons={hasMoons}
         />
-
       </mesh>
+      <primitive object={new THREE.AxesHelper(2 * radius)}/>
     </group>
   )
 }
 
-TerrestrialPlanet.propTypes = {
-  // position: PropTypes.array,
+ExoPlanet.propTypes = {
   name: PropTypes.string,
   setState: PropTypes.func,
   appState: PropTypes.object,
@@ -112,12 +120,10 @@ TerrestrialPlanet.propTypes = {
   orbitalRotation: PropTypes.bool,
   orbitalDistance: PropTypes.number,
   orbitalSpeedFactor: PropTypes.number,
-  jovian: PropTypes.bool,
-  ringed: PropTypes.bool,
-  landColor: PropTypes.object,
-  atmosphereColor: PropTypes.object,
-  waterColor: PropTypes.object,
-  color: PropTypes.object,
+  bandScale: PropTypes.number,
+  seedValue: PropTypes.number,
+  hasRings: PropTypes.bool,
+  hasMoons: PropTypes.bool,
   radius: PropTypes.number,
   sections: PropTypes.number,
   visible: PropTypes.bool,
@@ -125,5 +131,5 @@ TerrestrialPlanet.propTypes = {
 }
 
 export {
-  TerrestrialPlanet
+  ExoPlanet
 }

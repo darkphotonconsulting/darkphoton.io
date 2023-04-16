@@ -20,19 +20,10 @@ import {
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import {
   Loader,
-  // Float,
   Stars,
   Billboard,
-  // shaderMaterial,
-  // CubeCamera,
   Center
 } from '@react-three/drei'
-// import {
-//   EffectComposer,
-//   Bloom,
-//   ColorDepth
-// } from '@react-three/postprocessing'
-// import { BlendFunction } from 'postprocessing'
 // eslint-disable-next-line no-unused-vars
 import glsl from 'babel-plugin-glsl/macro'
 
@@ -46,7 +37,8 @@ import { Star } from './splash/Star.jsx'
 import { DysonSphere } from './splash/DysonSphere.jsx'
 // eslint-disable-next-line no-unused-vars
 import { TerrestrialPlanet } from './splash/TerrestrialPlanet.jsx'
-import { JovianPlanet } from './splash/JovianPlanet.jsx'
+// import { JovianPlanet } from './splash/JovianPlanet.jsx'
+import { ExoPlanet } from './splash/ExoPlanet.jsx'
 
 extend({ TextGeometry })
 
@@ -148,6 +140,7 @@ export function Splash ({
     >
       <React.Suspense fallback={null}>
         <Canvas
+          shadows={true}
           hidden={state.splash.hidden}
           dpr={window.devicePixelRatio}
           camera={{
@@ -177,17 +170,17 @@ export function Splash ({
             [new THREE.Color('#000000')]
           }
         />
-        <pointLight
+        {/* <pointLight
           position={
             [0, 0, 0]
           }
           color={new THREE.Color('#ffffff')}
-          intensity={1}
+          intensity={3}
         />
         <ambientLight
           color={new THREE.Color('#ffffff')}
-          intensity={1.5}
-        />
+          intensity={2.5}
+        /> */}
           <Stars
             saturation={10}
             count={10000}
@@ -214,17 +207,59 @@ export function Splash ({
           resolution={new THREE.Vector2(window.innerWidth, window.innerHeight)}
           color={new THREE.Color(0, 0, 0)}
         />
-        <JovianPlanet
+        <TerrestrialPlanet
           setState={setState}
           appState={state}
           orbitalAnimation={true}
-          orbitalDistance={220}
-          orbitalSpeedFactor={15}
+          orbitalDistance={170}
+          orbitalSpeedFactor={125}
           rotation={[0, 0, 0]}
-          radius={10}
+          radius={1.5}
           visible={state.splash.scene.planets.visible}
           resolution={new THREE.Vector2(window.innerWidth, window.innerHeight)}
-          color={'#632864'}
+          color={new THREE.Color(0, 0, 0)}
+          landColor={'#ffffff'}
+          waterColor={'#000000'}
+        />
+
+        <ExoPlanet
+          setState={setState}
+          appState={state}
+          orbitalAnimation={true}
+          orbitalDistance={300}
+          orbitalSpeedFactor={0.5}
+          rotation={[0, 0, 0]}
+          seedValue={Math.random() * (3 - 1) + 1}
+          bandScale={Math.random() * (1 - 0.5) + 0.5}
+          radius={9}
+          visible={state.splash.scene.planets.visible}
+          resolution={new THREE.Vector2(window.innerWidth, window.innerHeight)}
+        />
+        <ExoPlanet
+          setState={setState}
+          appState={state}
+          orbitalAnimation={true}
+          orbitalDistance={290}
+          orbitalSpeedFactor={0.666}
+          rotation={[0, 0, 0]}
+          seedValue={Math.random() * (5 - 3) + 5}
+          bandScale={Math.random() * (1 - 0.5) + 0.5}
+          resolution={new THREE.Vector2(window.innerWidth, window.innerHeight)}
+          radius={15}
+          visible={state.splash.scene.planets.visible}
+        />
+        <ExoPlanet
+          setState={setState}
+          appState={state}
+          orbitalAnimation={true}
+          orbitalDistance={300}
+          orbitalSpeedFactor={0.15}
+          rotation={[0, 0, 0]}
+          seedValue={Math.random() * (5 - 3) + 5}
+          bandScale={Math.random() * (1 - 0.5) + 0.5}
+          resolution={new THREE.Vector2(window.innerWidth, window.innerHeight)}
+          radius={15}
+          visible={state.splash.scene.planets.visible}
         />
 
         <DysonSphere
@@ -236,14 +271,14 @@ export function Splash ({
           state={state}
           setState={setState}
           enableBloom={state.splash.composer.bloom.enabled}
-          bloom={{
+          bloomOptions={{
             luminanceThreshold: 0.1,
             luminanceSmoothing: 0.9,
             intensity: 0.9,
             radius: 0.9
           }}
           enableColorDepth={true}
-          depth={{
+          depthOptions={{
             bits: 32,
             opacity: 0.9
           }}

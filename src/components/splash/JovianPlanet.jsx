@@ -44,8 +44,7 @@ function JovianPlanet ({
     gl
   } = useThree()
   useFrame((state) => {
-    // console.log(gl)
-    const time = state.clock.getElapsedTime() / 55
+    const time = 10.0 + (state.clock.getElapsedTime() * 0.005)
     materialRef.current.uniforms.color.value = new THREE.Color(color)
     materialRef.current.uniforms.time.value += time
     materialRef.current.uniforms.speed.value = 0.001
@@ -60,6 +59,9 @@ function JovianPlanet ({
       meshRef.current.position.x = x
       meshRef.current.position.z = z
     }
+    if (appState.splash.scene.planets.rotation.animate) {
+      meshRef.current.rotation.y += 0.005
+    }
   })
   const groupRef = React.useRef(null)
   const meshRef = React.useRef(null)
@@ -68,8 +70,9 @@ function JovianPlanet ({
   // geom.deleteAttribute('normal')
   // geom.deleteAttribute('uv')
   // geom = THREE.BufferGeometryUtils.mergeVertices(geom)
-  // geom.computeVertexNormals()
+  geom.computeVertexNormals()
   geom.computeTangents()
+
   // eslint-disable-next-line no-unused-vars
   const JovianMaterial = shaderMaterial(
     jovianShader.uniforms,

@@ -20,8 +20,6 @@ function DysonSphere ({
   ...props
 }) {
   React.useEffect(() => {
-    // console.log(panelShader.vertexShader)
-    // console.log(panelShader.fragmentShader)
   })
   const groupRef = React.useRef(null)
   // const cubeCamRef = React.useRef(null)

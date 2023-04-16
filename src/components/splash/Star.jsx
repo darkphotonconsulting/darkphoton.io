@@ -54,6 +54,17 @@ function Star ({
       position={position}
       visible={visible}
     >
+      <pointLight
+        position={
+          [0, 0, 0]
+        }
+        color={new THREE.Color('#B5AE4D')}
+        intensity={3}
+      />
+      <ambientLight
+        color={new THREE.Color('#ffffff')}
+        intensity={2.5}
+      />
       <mesh
         ref={meshRef}
       >
@@ -98,8 +109,9 @@ function Star ({
                   ref={parallaxMaterialRef}
                   attach='material'
                   color={new THREE.Color('#FFFFFF')}
+                  emissiveIntensity={0.5}
                   time={10}
-                  side={THREE.FrontSide}
+                  side={THREE.DoubleSide}
                   perlin={
                     texture
                   }

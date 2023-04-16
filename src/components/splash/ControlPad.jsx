@@ -10,17 +10,16 @@ function ControlPad ({
   // eslint-disable-next-line no-unused-vars
   const controls = useControls('mission-control', {
     animateOrbits: state.splash.scene.planets.orbit.animate,
+    animateRotation: state.splash.scene.planets.rotation.animate,
     showTech: state.splash.scene.tech.visible,
-    showStar: true,
-    showPlanets: true,
+    showStar: state.splash.scene.stars.visible,
+    showPlanets: state.splash.scene.planets.visible,
     useBloom: false,
     useColorDepth: true
   })
   const groupRef = React.useRef(null)
   const meshRef = React.useRef(null)
   React.useEffect(() => {
-    console.log(controls)
-    console.log(state)
     setState({
       ...state,
       splash: {
@@ -40,6 +39,9 @@ function ControlPad ({
             visible: controls.showPlanets,
             orbit: {
               animate: controls.animateOrbits
+            },
+            rotation: {
+              animate: controls.animateRotation
             }
           }
         },

@@ -32,9 +32,9 @@ function Observer ({
           <OrthographicCamera
             makeDefault
             ref={cameraRef}
-            far={2500}
+            far={1500}
             near={0.001}
-            fov={75}
+            fov={175}
             position={position}
             resolution={[window.innerWidth, window.innerHeight]}
             {...props}

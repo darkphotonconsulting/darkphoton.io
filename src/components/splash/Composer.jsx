@@ -12,7 +12,7 @@ function Composer ({
   state = {},
   setState = () => {},
   enableBloom = true,
-  bloom = {
+  bloomOptions = {
     mipmapBlur: true,
     luminanceThreshold: 0.01,
     radius: 0.2,
@@ -20,7 +20,7 @@ function Composer ({
     blendFunction: BlendFunction.MULTIPLY
   },
   enableColorDepth = true,
-  depth = {
+  depthOptions = {
     bits: 32,
     opacity: 0.9,
     blendFunction: BlendFunction.ADD
@@ -31,18 +31,18 @@ function Composer ({
     <EffectComposer>
       {enableBloom && (
         <Bloom
-          mipmapBlur={bloom.mipmapBlur}
-          luminanceThreshold={bloom.luminanceThreshold}
-          radius={bloom.radius}
-          levels={bloom.levels}
-          blendFunction={bloom.blendFunction}
+          mipmapBlur={bloomOptions.mipmapBlur}
+          luminanceThreshold={bloomOptions.luminanceThreshold}
+          radius={bloomOptions.radius}
+          levels={bloomOptions.levels}
+          blendFunction={bloomOptions.blendFunction}
         />
       )}
       {enableColorDepth && (
         <ColorDepth
-          bits={depth.bits}
-          opacity={depth.opacity}
-          blendFunction={depth.blendFunction}
+          bits={depthOptions.bits}
+          opacity={depthOptions.opacity}
+          blendFunction={depthOptions.blendFunction}
         />
       )}
     </EffectComposer>
@@ -53,9 +53,9 @@ Composer.propTypes = {
   state: PropTypes.object,
   setState: PropTypes.func,
   enableBloom: PropTypes.bool,
-  bloom: PropTypes.object,
+  bloomOptions: PropTypes.object,
   enableColorDepth: PropTypes.bool,
-  depth: PropTypes.object
+  depthOptions: PropTypes.object
 }
 
 export {

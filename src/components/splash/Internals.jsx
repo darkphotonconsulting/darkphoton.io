@@ -5,6 +5,10 @@ import { Observer } from './Observer.jsx'
 import { Navigator } from './Navigator.jsx'
 import * as THREE from 'three'
 import {
+  GizmoHelper,
+  GizmoViewport
+} from '@react-three/drei'
+import {
   useThree,
   useFrame
 } from '@react-three/fiber'
@@ -16,6 +20,7 @@ function Internals ({
   observerOrthographic = false,
   axesHelper = true,
   gridHelper = false,
+  axesGizmo = true,
   ...props
 }) {
   const {
@@ -29,7 +34,6 @@ function Internals ({
     gl.outputEncoding = THREE.sRGBEncoding
     gl.setPixelRatio(window.devicePixelRatio)
     gl.setSize(window.innerWidth, window.innerHeight)
-    // console.log(gl)
   })
   return (
     <group
@@ -46,6 +50,19 @@ function Internals ({
       <Navigator/>
       {axesHelper && (<primitive object={new THREE.AxesHelper(175)} />)}
       {gridHelper && (<primitive object={new THREE.GridHelper(1000, 50)}/>)}
+      {axesGizmo && (
+        <GizmoHelper
+          alignment='bottom-right'
+          margin={[80, 80]}
+        >
+          <GizmoViewport
+            axisColors={[
+              '#9d4b4b', '#2f7f4f', '#3b5b9d'
+            ]}
+            labelColor='white'
+          />
+        </GizmoHelper>
+      )}
     </group>
   )
 }
@@ -56,7 +73,8 @@ Internals.propTypes = {
   observerRotation: PropTypes.array,
   observerOrthographic: PropTypes.bool,
   axesHelper: PropTypes.bool,
-  gridHelper: PropTypes.bool
+  gridHelper: PropTypes.bool,
+  axesGizmo: PropTypes.bool
 }
 
 export {
