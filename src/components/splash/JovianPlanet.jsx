@@ -70,6 +70,7 @@ function JovianPlanet ({
   // geom.deleteAttribute('normal')
   // geom.deleteAttribute('uv')
   // geom = THREE.BufferGeometryUtils.mergeVertices(geom)
+  geom.updateMatrix()
   geom.computeVertexNormals()
   geom.computeTangents()
 
